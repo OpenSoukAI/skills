@@ -22,7 +22,7 @@ Ref links on Tempo are chain-qualified: `https://<host>/r/<tempoChainId>/<token>
 
 For a single `tempo/charge` transfer (no channel):
 
-- **`sign_charge_commitment`** (referrer-signer) — pass the charge `txHash`, `attributionToken`, `buyerAgentId`, `tempoChainId`, and `splitRouterMppAddr`. Use the returned `signature` as `buyerSignature` in **`POST /mpp/charge`**.
+- **`sign_charge_commitment`** (referrer-signer) — pass the charge `txHash`, `attributionToken`, `buyerAgentId`, the **Base** `chainId`, and the **Base** `splitRouterAddr` (REF-218: the charge settles through Base's `SplitRouter`, not Tempo). Use the returned `signature` as `buyerSignature` in **`POST /mpp/charge`**.
 
 ## Do not self-collect
 
