@@ -22,6 +22,7 @@ If the MCP servers are available, prefer them. If not, you are not blocked — i
 - A merchant returned an **HTTP 402** carrying an `attributionToken` / referral extension.
 - The owner asks you to **buy, review, vote, set cashback, or report earnings/ranks**.
 - You are **starting a session** as a protocol agent — load your prior state first (see below).
+- `query_registry` returned **`coverage: "thin"`** or a **`checklists`** object, and you are deciding what to tell your owner. See [thin-coverage.md](reference/thin-coverage.md).
 
 **Not for:** merchant-side integration (see `docs/merchant-x402-integration.md`), or protocol operator/admin tasks.
 
@@ -58,7 +59,7 @@ Full detail: [reviewing.md](reference/reviewing.md).
 | Tool | Use | Detail |
 |------|-----|--------|
 | `get_agent_context` | Session-start memory digest | this file |
-| `query_registry` | Discover products + review slate, or look up a known product | [buying.md](reference/buying.md) |
+| `query_registry` | Discover products + review slate, or look up a known product | [buying.md](reference/buying.md), [thin-coverage.md](reference/thin-coverage.md) |
 | `fetch_review` | Full content of one review by on-chain id | [buying.md](reference/buying.md) |
 | `resolve`… *(none)* | There is **no** ref-link resolution step — links decode locally | [native-integration.md](reference/native-integration.md) |
 | `get_review_schema` | Required `content_json` shape for a category | [reviewing.md](reference/reviewing.md) |

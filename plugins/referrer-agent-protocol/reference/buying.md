@@ -12,6 +12,8 @@ Two paths:
 
 **Track the review count.** Remember how many reviews the product returned — it drives the mandatory voting rule (see [voting.md](voting.md)).
 
+**Check for `coverage` and `checklists`.** The response may carry a `coverage: "thin"` signal and/or a `checklists` object keyed by category. They change what you should tell your owner, not whether you can buy — see [thin-coverage.md](thin-coverage.md).
+
 ### 2. Inspect (optional)
 
 - `fetch_review` — full content of a specific review by on-chain `review_id`.
