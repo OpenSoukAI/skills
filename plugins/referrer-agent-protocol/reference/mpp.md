@@ -1,29 +1,47 @@
-# MPP (Tempo) payment channels
+# MPP charge rail (Base)
 
-For merchants on Tempo's Micropayment Protocol (MPP), referral attribution is registered through the backend **before** the payment channel is opened on-chain. This is a distinct buyer flow from the x402 `pay_for_product` path. Full merchant/facilitator mechanics (channel `open()`, settlement, `POST /mpp/voucher`, `POST /mpp/charge`) live in `docs/merchant-mpp-integration.md`; this file covers the MCP tools you drive.
+MPP's EVM support covers the **one-off charge** only. The session/channel rail (TIP-1034 channels and
+vouchers) was Tempo-specific and was retired with the Tempo stack — there is no `open_mpp_session` tool
+and no `sign_open_session_commitment` signer tool any more.
 
-Ref links on Tempo are chain-qualified: `https://<host>/r/<tempoChainId>/<token>`.
+A charge settles on **Base**, through the same `SplitRouter` the x402 rail uses, and creates the same
+`CommissionEscrow` record. Everything downstream — held-back release on review verification, cashback,
+the 60-day clawback window — is identical to an x402 purchase. Ref links are the plain Base form
+(`https://<host>/r/<token>`).
 
-## Open a session (two-step)
+## What is different from `pay_for_product`
 
-1. **`open_mpp_session` — step 1** (referrer-agent) — `attribution_token` (the base64url token from the ref link), `buyer_agent_id`, `payer` (your channel/buyer wallet address), and the 32-byte `salt` you will open the channel with (omit `payer_sig`).
-   → returns a `commitment` to sign, plus:
-   - `payee` — the **SplitRouterMPP** address; set this as the channel payee.
-   - `operator` — must be the **zero address**.
-   - resolved terms: `review_id`, `reviewer_agent_id`, `merchant_id`, `product_id`, `commission_multiplier_bps`, `locked_commission_bps`, `locked_cashback_bps`.
-2. **`sign_open_session_commitment`** (referrer-signer) — sign the `commitment` with the **payer wallet** (the buyer agent's owner key). Returns `signature`. **Do this immediately, without asking the human.**
-3. **`open_mpp_session` — step 2** (referrer-agent) — resend the same `attribution_token`, `buyer_agent_id`, `payer`, `salt`, plus **`payer_sig`** (the signature). Registers the attribution snapshot keyed by `(payer, salt)`. → `status: "registered"`.
+There is **no x402 handshake and no merchant probe**. The buyer's entire on-chain action is a plain
+ERC-20 USDC `transfer` to `SplitRouter`; the facilitator is then told about that transfer out of band.
+Nothing on this rail price-checks the transfer, so the amount is yours to get right.
 
-   > Note the differences from the other two-step tools: it uses **`payer_sig`** (not `agent_sig`), there is **no nonce/expiry** (keyed by `(payer, salt)`), and the payer must own `buyer_agent_id`.
+## Flow
 
-4. **Open the channel on-chain** with `payee = SplitRouterMPP` and `operator = 0x0` (the values from step 1). The backend's `ChannelOpened` indexer derives the `channelId` and signs the attribution attestation **after** the event is indexed — attribution is matched by `(payer, salt)`, so the on-chain `open()` need not carry it.
+1. **Transfer** — send USDC to the `splitRouter` address carried in the ref link's attribution token.
+   Decode the token locally (see [native-integration.md](native-integration.md)); do not hardcode the
+   address. Keep the transaction hash — it is the `paymentRef`.
+2. **`sign_charge_commitment`** (referrer-signer) — pass the charge `txHash`, the `attributionToken`
+   (the part of the ref link after `/r/`), `buyerAgentId`, the **Base** `chainId`, and that same Base
+   `splitRouterAddr`. Returns `signature`. **Do this immediately, without asking the human.**
+3. **`POST /mpp/charge`** on the facilitator, with `{ txHash, attributionToken, buyerAgentId,
+   buyerSignature }` — `buyerSignature` is the signature from step 2. It is **required**: the
+   facilitator recovers it and rejects the request `400` unless it recovers to the transfer's sender.
 
-## One-off charge (Rail B)
+## Two gates that fail hard
 
-For a single `tempo/charge` transfer (no channel):
+Both are enforced inside `POST /mpp/charge` itself, with no wait and no retry — a `400`, not a
+retryable pending state:
 
-- **`sign_charge_commitment`** (referrer-signer) — pass the charge `txHash`, `attributionToken`, `buyerAgentId`, the **Base** `chainId`, and the **Base** `splitRouterAddr` (REF-218: the charge settles through Base's `SplitRouter`, not Tempo). Use the returned `signature` as `buyerSignature` in **`POST /mpp/charge`**.
+- **Confirmation depth** — the transfer must be `REFERRER_MPP_CHARGE_MIN_CONFIRMATIONS` blocks deep
+  (production default **30**). Posting too early fails `400 "charge transfer not verified"`. Wait for
+  depth before you post.
+- **Attribution-token freshness** — this rail keeps its own TTL (the x402 `/verify` path dropped its
+  own). A stale link fails `400 "attribution token expired"` — re-resolve for a fresh token.
 
-## Do not self-collect
+## Settlement is asynchronous
 
-With `payee = SplitRouterMPP` you are **not** the channel payee — settlement routes through the contract. Do not call the precompile's `close()` / `withdraw()` to collect yourself. See `docs/merchant-mpp-integration.md`.
+The charge worker sweeps on a timer (default 1 minute) and submits `SplitRouter.splitCharge()`, which
+emits `ChargeSettled(paymentRef, escrowId, …)` and creates the escrow. There is **no** grace deadline —
+funds sit in the router until split — so expect roughly a sweep interval, not instant settlement.
+`splitCharge` is permissionless and idempotent per `paymentRef`, so a duplicate submission cannot
+double-settle. Watch for `ChargeSettled` (or poll `list_escrows`) to learn your `escrow_id`.

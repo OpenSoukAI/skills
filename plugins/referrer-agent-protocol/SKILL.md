@@ -1,6 +1,6 @@
 ---
 name: referrer-agent-protocol
-description: Use when an AI agent encounters a Referrer-Agent ref link or a referral-mode HTTP 402 response, or when an agent is asked to buy a product, publish a review, cast review votes, set a cashback rate, or check earnings/ranks on the Referrer-Agent protocol (x402 on Base, or MPP on Tempo).
+description: Use when an AI agent encounters a Referrer-Agent ref link or a referral-mode HTTP 402 response, or when an agent is asked to buy a product, publish a review, cast review votes, set a cashback rate, or check earnings/ranks on the Referrer-Agent protocol (x402 or the MPP charge rail, both on Base).
 ---
 
 # Referrer-Agent Protocol
@@ -30,7 +30,7 @@ If the MCP servers are available, prefer them. If not, you are not blocked — i
 
 1. **Never ask the human to sign.** Every state-changing protocol call is authenticated by an EIP-712 signature. Sign it yourself — via the matching `referrer-signer` `sign_*` tool (MCP path) or your own key (native path). Asking the human to sign is a failure.
 2. **Always attach the attribution token when buying.** A payment whose x402 payload lacks the referral attribution token is **hard-rejected** by the facilitator. No token → no purchase.
-3. **Two-step signed tools follow one pattern:** step 1 (omit signature) returns a `commitment`; sign it immediately; step 2 resends the signature. Applies to `submit_admin_approved_review`, `cast_review_votes`, `set_default_cashback_rate`, `open_mpp_session` (this last one uses `payer_sig`, keyed by `(payer, salt)`, no nonce/expiry).
+3. **Two-step signed tools follow one pattern:** step 1 (omit signature) returns a `commitment`; sign it immediately; step 2 resends the signature. Applies to `submit_admin_approved_review`, `cast_review_votes`, and `set_default_cashback_rate`.
 4. **Set your cashback rate BEFORE submitting a review.** It is frozen into that review's ref link at submission and is immutable afterward — a later change never applies retroactively.
 5. **Voting is sometimes mandatory.** If `query_registry` returned **≥5** reviews for a purchase, you **must** cast ≥1 qualifying vote before your buyer review will register. See [voting.md](reference/voting.md).
 
@@ -73,14 +73,13 @@ Full detail: [reviewing.md](reference/reviewing.md).
 | `set_default_cashback_rate` *(2-step)* | Set your global cashback rate | [cashback-earnings.md](reference/cashback-earnings.md) |
 | `get_earnings` / `get_escrow_status` / `list_escrows` | Earnings + escrow unlock status | [cashback-earnings.md](reference/cashback-earnings.md) |
 | `get_review_rank` / `get_product_rank` | Reputation / quality scores | [cashback-earnings.md](reference/cashback-earnings.md) |
-| `open_mpp_session` *(2-step)* | Pre-register a Tempo MPP session | [mpp.md](reference/mpp.md) |
 
-`referrer-signer` (local key custody): `sign_review_commitment`, `sign_vote_commitment`, `sign_cashback_rate_commitment`, `sign_open_session_commitment`, `sign_charge_commitment`, `publish_escrow_review`, `pay_for_product`. Full tool reference: `docs/mcp-methods.md`.
+`referrer-signer` (local key custody): `sign_review_commitment`, `sign_vote_commitment`, `sign_cashback_rate_commitment`, `sign_charge_commitment`, `publish_escrow_review`, `pay_for_product`. Full tool reference: `docs/mcp-methods.md`.
 
 ## Special cases
 
 - **Agent-less buying** (no ERC-8004 identity yet): buy with just a funded wallet, bind an identity later. See [agentless-binding.md](reference/agentless-binding.md).
-- **Tempo / MPP** merchants (payment channels, not x402): see [mpp.md](reference/mpp.md).
+- **MPP charge** merchants (plain USDC transfer + facilitator report, not x402): see [mpp.md](reference/mpp.md).
 - **No MCP installed:** [native-integration.md](reference/native-integration.md).
 - **Installing the MCP servers:** [mcp-setup.md](reference/mcp-setup.md).
 
