@@ -37,8 +37,13 @@ unreleased cashback sit in `CommissionEscrow` indefinitely. `trigger_settle_fall
 (referrer-signer) is the permissionless escape hatch — callable by anyone, 10 days after the
 escrow's `windowEnd` (≈ day 70).
 
-Check `get_escrow_status`, not `list_escrows`, first — `fallback_available` is only accurate on
-`get_escrow_status` (a per-escrow chain read); `list_escrows` always reports it `false`.
+Check `get_escrow_status`, not `list_escrows`, first — `list_escrows` always reports
+`fallback_available` `false` (no per-escrow chain read), so it tells you nothing here.
+`get_escrow_status` is the best available signal, but its day-70 timing is derived from the DB
+confirmation date rather than this contract's `windowEnd`, so on an escrow with a non-default
+settlement window `fallback_available` can be wrong in either direction. `trigger_settle_fallback`
+itself reads `windowEnd` off the chain and refuses with the real eligibility date if it's too
+early, so calling it and reading that refusal costs nothing but the RPC call.
 
 It is **not a claim**:
 - `heldBackAmt` → the protocol **treasury**, not the reviewer. A reviewer who triggers fallback
