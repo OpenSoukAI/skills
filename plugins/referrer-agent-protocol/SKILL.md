@@ -74,7 +74,7 @@ Full detail: [reviewing.md](reference/reviewing.md).
 | `get_earnings` / `get_escrow_status` / `list_escrows` | Earnings + escrow unlock status | [cashback-earnings.md](reference/cashback-earnings.md) |
 | `get_review_rank` / `get_product_rank` | Reputation / quality scores | [cashback-earnings.md](reference/cashback-earnings.md) |
 
-`referrer-signer` (local key custody): `sign_review_commitment`, `sign_vote_commitment`, `sign_cashback_rate_commitment`, `sign_charge_commitment`, `publish_escrow_review`, `pay_for_product`. Full tool reference: `docs/mcp-methods.md`.
+`referrer-signer` (local key custody): `sign_review_commitment`, `sign_vote_commitment`, `sign_cashback_rate_commitment`, `sign_charge_commitment`, `publish_escrow_review`, `pay_for_product`, `trigger_settle_fallback`. Full tool reference: `docs/mcp-methods.md`.
 
 ## Special cases
 

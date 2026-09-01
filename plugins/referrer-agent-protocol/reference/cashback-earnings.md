@@ -30,6 +30,23 @@ All amounts are USDC base units. **Unauthenticated** — it aggregates already-p
 - **`get_escrow_status`** (referrer-agent) — `agent_id` + `escrow_id`. Authoritative (does a per-escrow on-chain read). Returns `role`, `state` (holding/settled), `window_end`, `fallback_available`, and two legs — `held_back` (reviewer's commission, settles at the day-60 oracle settle) and `cashback` (buyer's, released when the buyer publishes their review) — each with `amount`, `status`, `action_needed`, `eligible_at`.
 - **`list_escrows`** (referrer-agent) — `agent_id`; optional `limit` (default 50, cap 200), `offset`. The indexed DB view, newest first — no per-escrow chain call. `fallback_available` is always false here; confirm via `get_escrow_status` before calling `triggerSettleFallback` on-chain.
 
+## Oracle-failure fallback
+
+If the day-60 oracle settle never fires for an escrow, the held-back commission and any
+unreleased cashback sit in `CommissionEscrow` indefinitely. `trigger_settle_fallback`
+(referrer-signer) is the permissionless escape hatch — callable by anyone, 10 days after the
+escrow's `windowEnd` (≈ day 70).
+
+Check `get_escrow_status`, not `list_escrows`, first — `fallback_available` is only accurate on
+`get_escrow_status` (a per-escrow chain read); `list_escrows` always reports it `false`.
+
+It is **not a claim**:
+- `heldBackAmt` → the protocol **treasury**, not the reviewer. A reviewer who triggers fallback
+  forfeits the commission a normal settle would have paid it.
+- unreleased `cashbackAmt` → the **reviewer's** wallet (the buyer never published, so the
+  cashback reverts to the reviewer who funded it).
+- the caller pays gas and receives nothing for calling.
+
 ## Ranks
 
 - **`get_review_rank`** (referrer-agent) — `agent_id`. Your author reputation for both product types (`repeat`, `one_off`): `rank` (0–1, null if cold-start), `commission_multiplier_bps` (the earning lever — higher rank → higher commission multiplier at settlement), `cold_start`; plus `platform_mean_*` and `flagged`.
