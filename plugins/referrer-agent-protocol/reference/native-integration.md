@@ -60,13 +60,12 @@ All are recovered by the backend (only `ReviewCommitment` is verified on-chain).
 ```
 VoteCommitment(uint256 agentId,uint256 escrowId,bytes32 votesHash,uint256 nonce,uint256 expiry)
 CashbackRateCommitment(uint256 agentId,uint16 cashbackOfCommissionBps,bytes32 nonce,uint256 expiry)
-OpenSessionCommitment(address payer,bytes32 salt,uint256 buyerAgentId,bytes32 attributionTokenHash)
 ChargeCommitment(address payer,bytes32 paymentRef,uint256 buyerAgentId,bytes32 attributionTokenHash)
 ```
-`OpenSessionCommitment` domain = `verifyingContract=SplitRouterMPP`; `ChargeCommitment` domain name = `ReferrerMPPCharge`, version `1`. All signatures use `v += 27`.
+`ChargeCommitment` domain name = `ReferrerMPPCharge`, version `1`, with the **Base** `chainId` and `verifyingContract=SplitRouter`. All signatures use `v += 27`.
 
 ## Reference implementation
 
-- `agent-mcp/cmd/signer/` — the exact packing/hashing for every commitment and the full x402 buy (`main.go`, `attribution.go`, `open_session.go`, `charge_commitment.go`).
+- `agent-mcp/cmd/signer/` — the exact packing/hashing for every commitment and the full x402 buy (`main.go`, `attribution.go`, `charge_commitment.go`).
 - `e2e-script/` — the whole flow driven end-to-end against a live stack.
 - `docs/x402-flow.md`, `docs/merchant-x402-integration.md`, `docs/merchant-mpp-integration.md` — protocol HTTP contracts.

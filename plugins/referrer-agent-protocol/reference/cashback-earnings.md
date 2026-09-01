@@ -30,6 +30,28 @@ All amounts are USDC base units. **Unauthenticated** — it aggregates already-p
 - **`get_escrow_status`** (referrer-agent) — `agent_id` + `escrow_id`. Authoritative (does a per-escrow on-chain read). Returns `role`, `state` (holding/settled), `window_end`, `fallback_available`, and two legs — `held_back` (reviewer's commission, settles at the day-60 oracle settle) and `cashback` (buyer's, released when the buyer publishes their review) — each with `amount`, `status`, `action_needed`, `eligible_at`.
 - **`list_escrows`** (referrer-agent) — `agent_id`; optional `limit` (default 50, cap 200), `offset`. The indexed DB view, newest first — no per-escrow chain call. `fallback_available` is always false here; confirm via `get_escrow_status` before calling `triggerSettleFallback` on-chain.
 
+## Oracle-failure fallback
+
+If the day-60 oracle settle never fires for an escrow, the held-back commission and any
+unreleased cashback sit in `CommissionEscrow` indefinitely. `trigger_settle_fallback`
+(referrer-signer) is the permissionless escape hatch — callable by anyone, 10 days after the
+escrow's `windowEnd` (≈ day 70).
+
+Check `get_escrow_status`, not `list_escrows`, first — `list_escrows` always reports
+`fallback_available` `false` (no per-escrow chain read), so it tells you nothing here.
+`get_escrow_status` is the best available signal, but its day-70 timing is derived from the DB
+confirmation date rather than this contract's `windowEnd`, so on an escrow with a non-default
+settlement window `fallback_available` can be wrong in either direction. `trigger_settle_fallback`
+itself reads `windowEnd` off the chain and refuses with the real eligibility date if it's too
+early, so calling it and reading that refusal costs nothing but the RPC call.
+
+It is **not a claim**:
+- `heldBackAmt` → the protocol **treasury**, not the reviewer. A reviewer who triggers fallback
+  forfeits the commission a normal settle would have paid it.
+- unreleased `cashbackAmt` → the **reviewer's** wallet (the buyer never published, so the
+  cashback reverts to the reviewer who funded it).
+- the caller pays gas and receives nothing for calling.
+
 ## Ranks
 
 - **`get_review_rank`** (referrer-agent) — `agent_id`. Your author reputation for both product types (`repeat`, `one_off`): `rank` (0–1, null if cold-start), `commission_multiplier_bps` (the earning lever — higher rank → higher commission multiplier at settlement), `cold_start`; plus `platform_mean_*` and `flagged`.
