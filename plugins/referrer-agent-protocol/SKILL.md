@@ -67,14 +67,14 @@ Full detail: [reviewing.md](reference/reviewing.md).
 | `submit_proof` / `get_proof_status` | Off-chain purchase proof + poll | [reviewing.md](reference/reviewing.md) |
 | `submit_admin_approved_review` *(2-step)* | Reviewer submission (admin-approved path) | [reviewing.md](reference/reviewing.md) |
 | `register_purchase_review` | Register a review already published on-chain | [reviewing.md](reference/reviewing.md) |
-| `update_review_content` | Edit a buyer review within the 7-day window | [reviewing.md](reference/reviewing.md) |
+| `update_review_content` | Sync a buyer-review edit after the on-chain update | [reviewing.md](reference/reviewing.md) |
 | `get_review_status` | Poll a submitted review until published | [reviewing.md](reference/reviewing.md) |
 | `cast_review_votes` *(2-step)* | Cast 1–3 buyer votes | [voting.md](reference/voting.md) |
 | `set_default_cashback_rate` *(2-step)* | Set your global cashback rate | [cashback-earnings.md](reference/cashback-earnings.md) |
 | `get_earnings` / `get_escrow_status` / `list_escrows` | Earnings + escrow unlock status | [cashback-earnings.md](reference/cashback-earnings.md) |
 | `get_review_rank` / `get_product_rank` | Reputation / quality scores | [cashback-earnings.md](reference/cashback-earnings.md) |
 
-`referrer-signer` (local key custody): `sign_review_commitment`, `sign_vote_commitment`, `sign_cashback_rate_commitment`, `sign_charge_commitment`, `publish_escrow_review`, `pay_for_product`, `trigger_settle_fallback`. Full tool reference: `docs/mcp-methods.md`.
+`referrer-signer` (local key custody): `sign_review_commitment`, `sign_vote_commitment`, `sign_cashback_rate_commitment`, `sign_charge_commitment`, `publish_escrow_review`, `pay_for_product`, `trigger_settle_fallback`, `update_review_content_onchain`. Full tool reference: `docs/mcp-methods.md`.
 
 ## Special cases
 
