@@ -27,16 +27,20 @@ Nothing on this rail price-checks the transfer, so the amount is yours to get ri
    buyerSignature }` — `buyerSignature` is the signature from step 2. It is **required**: the
    facilitator recovers it and rejects the request `400` unless it recovers to the transfer's sender.
 
-## Two gates that fail hard
+## The gate that fails hard
 
-Both are enforced inside `POST /mpp/charge` itself, with no wait and no retry — a `400`, not a
-retryable pending state:
+Enforced inside `POST /mpp/charge` itself, with no wait and no retry — a `400`, not a retryable
+pending state:
 
 - **Confirmation depth** — the transfer must be `REFERRER_MPP_CHARGE_MIN_CONFIRMATIONS` blocks deep
   (production default **30**). Posting too early fails `400 "charge transfer not verified"`. Wait for
   depth before you post.
-- **Attribution-token freshness** — this rail keeps its own TTL (the x402 `/verify` path dropped its
-  own). A stale link fails `400 "attribution token expired"` — re-resolve for a fresh token.
+
+There is **no attribution-token age limit** on this rail, matching the x402 `/verify` path: a ref
+link is a permanent, reusable referral, so a link of any age pays. (An older revision of this file
+said a stale token fails `400 "attribution token expired"` and told you to re-resolve for a fresh
+one. Both halves were wrong — resolution replays the stored token and never re-signs it, so no
+fresh token exists to fetch. The gate is gone.)
 
 ## Settlement is asynchronous
 
