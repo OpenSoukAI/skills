@@ -1,7 +1,8 @@
 # Native integration (no MCP)
 
 Every protocol capability is reachable with **no MCP servers installed**, by any agent that can:
-- sign **EIP-712** typed data and **ERC-3009** (`receiveWithAuthorization` / `transferWithAuthorization`),
+- sign **EIP-712** typed data and **ERC-3009** — specifically the `ReceiveWithAuthorization`
+  typehash, which is what `SplitRouter.route()` requires (see step 2),
 - verify **Ed25519** signatures,
 - speak HTTP and read on-chain events.
 
@@ -31,9 +32,11 @@ The verified payload gives you everything to pay: `merchantEndpoint`, `splitRout
    X-Referrer-Token: <the base64url attribution token>
    X-Referrer-Buyer-Agent-Id: <buyer agent NFT id, decimal>
    ```
-   Expect **HTTP 402** with x402 `PaymentRequired` JSON: `asset` (USDC), `amount`, `network`, the pay target, and `extra.name` / `extra.version` (ERC-3009 domain), plus `extensions.attributionToken` / `extensions.buyerAgentId`.
+   Expect **HTTP 402** with x402 `PaymentRequired` JSON: `asset` (USDC), `amount`, `network`, the pay target, and `extra.name` / `extra.version` (ERC-3009 domain), `extra.authorizationType` (the EIP-712 primary type to sign — `ReceiveWithAuthorization`), plus `extensions.attributionToken` / `extensions.buyerAgentId`.
 
-2. **Sign ERC-3009:** build an `ExactEIP3009Authorization` — `from` = your wallet, `to` = the token's `splitRouter`, `value` = required amount, `validAfter=0`, `validBefore` = now + a few minutes, random 32-byte `nonce`. Hash per EIP-3009 with `(chainId, tokenAddr, tokenName, tokenVersion)` and sign; set `v += 27`.
+2. **Sign ERC-3009 `ReceiveWithAuthorization`:** build an `ExactEIP3009Authorization` — `from` = your wallet, `to` = the token's `splitRouter`, `value` = required amount, `validAfter=0`, `validBefore` = now + a few minutes, random 32-byte `nonce`. Hash it as EIP-712 typed data with primary type **`ReceiveWithAuthorization`** over domain `(name, version, chainId, verifyingContract=tokenAddr)`, and sign; set `v += 27`.
+
+   **Do not sign `TransferWithAuthorization`.** ERC-3009 defines both structs with identical fields and different names, so they produce different EIP-712 digests. `route()` calls `receiveWithAuthorization`, which requires `to == msg.sender`; real Circle USDC rejects a Transfer-typed signature inside the token. The x402 `exact` scheme signs Transfer by default, so a stock SDK client cannot pay this rail — sign the authorization yourself. The 402's `extra.authorizationType` and the ref link's `authorizationType` both name the required type; if the facilitator rejects a payment it returns `requiredAuthorizationType` plus `retryable: true`, and re-signing the same authorization under the right type is free (nothing was sent on-chain and the nonce is unused).
 
 3. **Pay (phase 2):** re-`POST <merchantEndpoint>` with the x402 payment payload (base64url-encoded), which **must** carry `Extensions: { attributionToken, buyerAgentId }`. A payload lacking the attribution token is hard-rejected by the facilitator.
    > Header name: the `referrer-signer` sends the encoded payload in a `PAYMENT-SIGNATURE` header; `docs/x402-flow.md` describes it as `X-PAYMENT`. **Confirm which the target merchant/facilitator expects before shipping.**

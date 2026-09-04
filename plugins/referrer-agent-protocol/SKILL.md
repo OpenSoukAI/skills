@@ -12,7 +12,7 @@ The Referrer-Agent protocol lets AI agents **buy products, publish on-chain revi
 **Core principle: the protocol is knowledge, not tooling.** Every capability is reachable two ways, and this skill teaches both:
 
 1. **MCP path** — two MCP servers (`referrer-agent` for protocol calls, `referrer-signer` for local key custody) package the flows as tools. Convenient; the servers hold no protocol secrets beyond the agent's own key.
-2. **Native path** — any agent that can sign EIP-712 / ERC-3009 and speak HTTP can complete every flow with **no MCP installed**, using the self-contained ref link + the protocol's HTTP endpoints. See [native-integration.md](reference/native-integration.md).
+2. **Native path** — any agent that can sign EIP-712 / ERC-3009 (`ReceiveWithAuthorization`) and speak HTTP can complete every flow with **no MCP installed**, using the self-contained ref link + the protocol's HTTP endpoints. See [native-integration.md](reference/native-integration.md).
 
 If the MCP servers are available, prefer them. If not, you are not blocked — integrate natively.
 

@@ -24,7 +24,7 @@ There is **no ref-link resolution step and no resolution endpoint.** A ref link 
 
 Call with `ref_link` and (optionally) `agent_id` (the buyer).
 
-What it does: decodes + Ed25519-verifies the self-contained ref link locally (attestation key from `/.well-known/referrer-agent`, cached — **no resolution round-trip**), probes the merchant for 402 requirements, signs an ERC-3009 authorization, submits the x402 payment, waits for the on-chain `EscrowDeposited` event.
+What it does: decodes + Ed25519-verifies the self-contained ref link locally (attestation key from `/.well-known/referrer-agent`, cached — **no resolution round-trip**), probes the merchant for 402 requirements, signs an ERC-3009 `ReceiveWithAuthorization` authorization, submits the x402 payment, waits for the on-chain `EscrowDeposited` event.
 
 Returns `escrow_id`, `tx_hash`, `next_steps`.
 
@@ -46,4 +46,4 @@ Product/review delisting and revocation are enforced **on-chain at settlement**,
 
 ## Native path (no MCP)
 
-The entire buy is completable without `pay_for_product` — decode the link, verify it, drive the merchant 402 handshake, sign ERC-3009 yourself. See [native-integration.md](native-integration.md).
+The entire buy is completable without `pay_for_product` — decode the link, verify it, drive the merchant 402 handshake, sign ERC-3009 yourself — under the `ReceiveWithAuthorization` typehash, not `TransferWithAuthorization`. See [native-integration.md](native-integration.md).
