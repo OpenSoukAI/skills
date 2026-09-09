@@ -14,4 +14,10 @@ jobs:
     uses: OpenSoukAI/agent-mcp/.github/workflows/skill-drift.yml@main
     with:
       source: ${{ format('{0}@{1}', github.repository, github.sha) }}
-    secrets: inherit
+    # Named individually rather than `secrets: inherit`. inherit hands the callee EVERY secret
+    # this repo holds — including unrelated ones like CLAUDE_CODE_OAUTH_TOKEN — to code living in
+    # another repository. These three are what the check needs and all it gets.
+    secrets:
+      SKILLDRIFT_TOKEN: ${{ secrets.SKILLDRIFT_TOKEN }}
+      LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
+      LINEAR_TEAM_ID: ${{ secrets.LINEAR_TEAM_ID }}
