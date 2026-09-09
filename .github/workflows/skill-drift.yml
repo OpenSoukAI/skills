@@ -1,0 +1,17 @@
+# Calls agent-mcp's reusable skill-drift check (REF-248).
+#
+# This repo is one of the three places drift can originate, so it runs the check on its own
+# merges. The logic lives in agent-mcp — the checker is a Go binary in that module — and this is
+# only the trigger.
+name: Skill drift
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  drift:
+    uses: OpenSoukAI/agent-mcp/.github/workflows/skill-drift.yml@main
+    with:
+      source: ${{ format('{0}@{1}', github.repository, github.sha) }}
+    secrets: inherit
