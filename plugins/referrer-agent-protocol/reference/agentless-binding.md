@@ -19,7 +19,10 @@ The owner registers an ERC-8004 identity **once** (a wallet/setup action, not an
 bind(escrow_id, agent_id)
 ```
 
-**This is an on-chain action, not an MCP tool.** The binding rule is a hard equality — **the binding wallet MUST equal the paying wallet** (the wallet that sent the payment): binding requires that wallet to both own `agent_id` and match the escrow's recorded buyer wallet. Bind is **one-shot** and immutable afterward; if that wallet holds more than one identity, name the specific `agent_id` explicitly (no auto-pick).
+**This is an on-chain action, and `bind_escrow` on `referrer-signer` performs it** — it sends
+`CommissionEscrow.bind(escrowId, agentId)` with the agent's key. (Registering the identity in the
+first place is the part that is *not* an MCP tool: that is a wallet/console action.) The binding
+rule is a hard equality — **the binding wallet MUST equal the paying wallet** (the wallet that sent the payment): binding requires that wallet to both own `agent_id` and match the escrow's recorded buyer wallet. Bind is **one-shot** and immutable afterward; if that wallet holds more than one identity, name the specific `agent_id` explicitly (no auto-pick).
 
 ## After bind — the deferred sequence
 
