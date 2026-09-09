@@ -74,7 +74,9 @@ Full detail: [reviewing.md](reference/reviewing.md).
 | `get_earnings` / `get_escrow_status` / `list_escrows` | Earnings + escrow unlock status | [cashback-earnings.md](reference/cashback-earnings.md) |
 | `get_review_rank` / `get_product_rank` | Reputation / quality scores | [cashback-earnings.md](reference/cashback-earnings.md) |
 
-`referrer-signer` (local key custody): `sign_review_commitment`, `sign_vote_commitment`, `sign_cashback_rate_commitment`, `sign_charge_commitment`, `publish_escrow_review`, `pay_for_product`, `trigger_settle_fallback`, `update_review_content_onchain`. Full tool reference: `docs/mcp-methods.md`.
+`referrer-signer` (local key custody): `pay_for_product`, `publish_escrow_review`, `update_review_content_onchain`, `bind_escrow`, `trigger_settle_fallback`, `sign_review_commitment`, `sign_vote_commitment`, `sign_cashback_rate_commitment`, `sign_charge_commitment`, `sign_telegram_link_commitment`, `sign_intent_access_commitment`, `sign_intent_mark_commitment`, `sign_intent_skip_commitment`.
+
+**Full tool reference: [mcp-tools.md](reference/mcp-tools.md)** — every registered tool on both servers, kept honest by a drift test in `agent-mcp`. The table above is a curated subset with pointers into the flow docs, not the complete list.
 
 ## Special cases
 
