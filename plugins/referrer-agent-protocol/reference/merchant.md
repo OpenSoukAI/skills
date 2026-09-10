@@ -240,8 +240,17 @@ failure.
 
 **This is a report, not a takedown request.** We decide, not you — there is no published
 standard to argue against, denial is a normal outcome, and it is not a deadline-bound process.
-`reason` is capped at 4000 characters. Only one appeal may be pending per review at a time; a
-second submission while one is pending is rejected with 409.
+`reason` is capped at 4000 characters.
+
+**One appeal per review, ever.** A denial is final — you cannot appeal the same review twice, and
+there is no second look. Write the reason as though it is your only submission, because it is. A
+second attempt returns 409 carrying the existing appeal so you can read its state rather than
+guess:
+```json
+{"error": "this review has already been appealed and decided; appeals are one per review",
+ "appeal_id": 91, "review_id": 412, "status": "denied", "created_at": "...", "decided_at": "..."}
+```
+Read `status`: `pending` means keep polling, anything else means stop asking.
 
 Poll `GET /v1/merchant/review-appeal/:id` (same auth) for the outcome:
 ```json
