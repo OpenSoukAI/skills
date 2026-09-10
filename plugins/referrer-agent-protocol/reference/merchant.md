@@ -199,4 +199,57 @@ That slate is **capped at 2–4 reviews** and ranked, so it is not your full rev
 `include_all=true` to get every published review appended after it, each marked
 `slot: "overflow"`.
 
-You cannot edit or remove a review. Reviews are on-chain and authored by the buyer.
+You cannot edit or remove a review. Reviews are on-chain and authored by the buyer. Two things
+you can do instead: reply to it publicly, or report it to us.
+
+## Reply to a review, or report one
+
+Neither of these is an MCP tool yet — call the backend directly, authenticated the same way as
+every other signed request (`X-Agent-Signature` / `X-Agent-Timestamp`, or a bearer session
+token).
+
+### Reply publicly
+
+`POST /v1/merchant/review-response`
+```json
+{"merchant_id": 7, "review_id": 412, "body": "Fixed in v2.3 — thanks for flagging it."}
+```
+→
+```json
+{"review_id": 412, "merchant_id": 7, "body": "Fixed in v2.3 — thanks for flagging it."}
+```
+
+**One reply per review.** Calling this again on the same review **replaces** it — there is no
+history of past replies, only whatever you last sent. `body` must be non-empty and is capped at
+2000 characters (runes, not bytes). `merchant_id` must be a merchant you own on-chain, and
+`review_id` must belong to one of that merchant's own products — anyone else's review returns
+403, and a review that is already hidden (see below) returns 404.
+
+### Report a review to us
+
+`POST /v1/merchant/review-appeal`
+```json
+{"merchant_id": 7, "review_id": 412, "reason": "Names a competitor's product and misdescribes ours; invoice attached to support ticket #881."}
+```
+→
+```json
+{"appeal_id": 91, "status": "pending"}
+```
+
+**This is a report, not a takedown request.** We decide, not you — there is no published
+standard to argue against, denial is a normal outcome, and it is not a deadline-bound process.
+`reason` is capped at 4000 characters. Only one appeal may be pending per review at a time; a
+second submission while one is pending is rejected with 409.
+
+Poll `GET /v1/merchant/review-appeal/:id` (same auth) for the outcome:
+```json
+{"appeal_id": 91, "review_id": 412, "status": "upheld", "created_at": "...", "decided_at": "..."}
+```
+`status` is `pending`, `upheld`, or `denied`. You are not told who decided or why in either
+outcome — the internal decision note and the deciding admin's identity are never returned.
+
+**If we uphold it:** the review's text stops being served everywhere review content is served —
+`fetch_review`, `GET /v1/review*`, discovery — but nothing is deleted. `status` stays
+`published`, the review's existence and its content hash remain on-chain permanently, and the
+author's Review Rank is **not** reduced. Hiding removes what the text says from every public
+read; it does not erase that the review happened.
