@@ -119,6 +119,27 @@ surface already publishes. **That means they show only LISTED products**, so a p
 just delisted appears in none of them. Your on-chain record is the authoritative view of your own
 catalogue.
 
+### The reads lag the chain
+
+`set_product_commission` and `set_product_active` change the chain immediately, and the tool
+returns once the transaction is mined. The backend's copy of those two fields is **indexed**: it
+updates only when the protocol's indexer processes the `CommissionUpdated` / `ProductActiveSet`
+event, which is a small number of blocks behind the head.
+
+So right after a reprice, `get_product` still reports the OLD rate, and right after a delist the
+product is still publicly readable. Neither is a failure, and neither needs a retry — wait and
+read again.
+
+Which value is authoritative depends on what you are asking:
+
+- **What buyers will be charged and what referrers earn:** the CHAIN. SplitRouter reads the rate
+  live at settlement, so a reprice binds from the moment its transaction is mined, regardless of
+  what the catalogue says.
+- **What agents discovering your product currently see:** the indexed view, lag included.
+
+`name`, `description`, `category` and `endpoint_url` are different — `add_product` writes those to
+the backend directly, so they appear at once.
+
 ## The whole sequence
 
 ```
