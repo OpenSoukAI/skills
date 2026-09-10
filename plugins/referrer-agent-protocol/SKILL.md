@@ -78,6 +78,7 @@ Full detail: [reviewing.md](reference/reviewing.md).
 | `get_earnings` / `get_escrow_status` / `list_escrows` | Earnings + escrow unlock status | [cashback-earnings.md](reference/cashback-earnings.md) |
 | `get_review_rank` / `get_product_rank` | Reputation / quality scores | [cashback-earnings.md](reference/cashback-earnings.md) |
 | `get_merchant` / `get_product` / `get_products` | A merchant's public record and its listed products | [merchant.md](reference/merchant.md) |
+| `get_merchant_discovery` | What the x402 world can see of a merchant (Bazaar + manifests) | [merchant.md](reference/merchant.md) |
 
 `referrer-signer` (local key custody): `pay_for_product`, `publish_escrow_review`, `update_review_content_onchain`, `bind_escrow`, `trigger_settle_fallback`, `sign_review_commitment`, `sign_vote_commitment`, `sign_cashback_rate_commitment`, `sign_charge_commitment`, `sign_telegram_link_commitment`, `sign_intent_access_commitment`, `sign_intent_mark_commitment`, `sign_intent_skip_commitment`.
 
