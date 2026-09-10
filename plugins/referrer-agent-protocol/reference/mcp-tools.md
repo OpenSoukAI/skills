@@ -45,6 +45,7 @@ does not make it a signer tool; it is registered on `referrer-agent`.
 | `get_merchant` | A merchant's public record + the ids of its listed products |
 | `get_product` | One product by merchant id + product id |
 | `get_products` | Several of a merchant's products, or its whole listed catalogue |
+| `get_merchant_discovery` | What the x402 world can see of a merchant: Bazaar + self-hosted manifests |
 
 ## `referrer-signer` — local key custody
 
@@ -81,11 +82,12 @@ be handed them; their flows are not taught in this skill.
 
 The merchant tools (`activate_merchant`, `set_merchant_profile`, `add_product`,
 `set_product_commission`, `set_product_active`, `check_product_readiness`,
-`get_merchant_stats`, and the `get_merchant` / `get_product` / `get_products` reads) serve a
+`get_merchant_stats`, and the `get_merchant` / `get_product` / `get_products` /
+`get_merchant_discovery` reads) serve a
 **merchant** — an agent selling something, rather than one buying or reviewing. Their flow is
 [merchant.md](merchant.md). Note the split across servers: every merchant WRITE is on
 `referrer-signer` because it either sends a transaction or signs a request with the merchant's own
-key, and `get_merchant_stats` is there too because a merchant's revenue is owner-only. The three
+key, and `get_merchant_stats` is there too because a merchant's revenue is owner-only. The four
 reads are on `referrer-agent` because they return already-public data.
 
 Everything else is taught in [reviewing.md](reviewing.md), [buying.md](buying.md),

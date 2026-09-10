@@ -75,6 +75,39 @@ before you promote anything.
 `pass: false` with a per-check breakdown is a *successful* probe reporting a misconfigured endpoint.
 It is not an error.
 
+## Check you can actually be found
+
+```
+get_merchant_discovery(merchant_id)
+```
+
+`check_product_readiness` answers "is THIS endpoint wired correctly?". This answers "can
+anyone find me at all?" — and a product can pass the first and fail the second.
+
+It reports every x402 resource payable to your addresses that appears in the CDP Bazaar, plus
+any `/.well-known/x402.json` manifest served by your registered product endpoints. Each item
+comes back tagged:
+
+| Status | Meaning |
+|---|---|
+| `referral_mode` | payment routes through this chain's SplitRouter, so referrals attribute and referrers earn |
+| `published` | the resource matches one of your registered products (`product_id` is set) |
+| `discoverable` | visible out there, but not registered with the protocol |
+
+**`discoverable` on your own product is the interesting one.** It means the outside world can
+see and pay that resource, but the protocol does not know it is yours — so no referrer earns
+on it and it will not appear in discovery results here. Register it with `add_product`.
+
+`pay_tos` echoes the addresses that were checked: your agent wallet and its owner, resolved
+on-chain. If payments arrive at a treasury that is neither, pass it in `pay_to` (up to 10) or
+those resources will not be found.
+
+**A `throttled` field means the answer is INCOMPLETE.** It names the legs (`bazaar`,
+`manifest`) whose outbound fetches the server skipped because its discovery budget was
+momentarily spent. When it is present, an empty or short item list tells you nothing about
+whether you are listed — retry, do not conclude you are missing. Its absence means the answer
+is complete.
+
 ## Price, and re-price
 
 ```
@@ -107,6 +140,7 @@ get_merchant_stats(merchant_id)     # authenticated, owner-only
 get_merchant(merchant_id)           # public record + listed product ids
 get_product(merchant_id, product_id)
 get_products(merchant_id)           # whole listed catalogue, or a named subset
+get_merchant_discovery(merchant_id) # what the x402 world sees — see above
 ```
 
 `get_merchant_stats` is on `referrer-signer` and signed with your key, because a merchant's
@@ -114,7 +148,7 @@ revenue is its own: conversions, gross revenue, escrow amounts holding vs settle
 counts. Amounts are USDC base units (6 decimals). `product_count` includes delisted products;
 `active_product_count` is the subset that is listed.
 
-The three reads are on `referrer-agent` and unauthenticated — they return what the public REST
+The other reads are on `referrer-agent` and unauthenticated — they return what the public REST
 surface already publishes. **That means they show only LISTED products**, so a product you have
 just delisted appears in none of them. Your on-chain record is the authoritative view of your own
 catalogue.
@@ -146,10 +180,14 @@ the backend directly, so they appear at once.
 register ERC-8004 identity (wallet, not a tool)
   → activate_merchant
   → set_merchant_profile
-  → add_product           → check_product_readiness
+  → add_product           → check_product_readiness → get_merchant_discovery
   → set_product_commission / set_product_active   (as needed, any time)
   → get_merchant_stats    (whenever)
 ```
+
+Readiness and discovery answer different questions and you want both: readiness proves one
+endpoint takes referral payments correctly, discovery proves the catalogue is visible to the
+agents that would send them.
 
 ## Reading what buyers said about you
 
