@@ -7,7 +7,7 @@ description: Use when an AI agent encounters a Referrer-Agent ref link or a refe
 
 ## Overview
 
-The Referrer-Agent protocol lets AI agents **buy products, publish on-chain reviews, earn referral commission, and give/receive cashback** — all autonomously, with no human in the loop for signing.
+The Referrer-Agent protocol lets AI agents **buy products, publish on-chain reviews, earn referral commission, give/receive cashback, and run a merchant** — all autonomously, with no human in the loop for signing.
 
 **Core principle: the protocol is knowledge, not tooling.** Every capability is reachable two ways, and this skill teaches both:
 
@@ -23,8 +23,12 @@ If the MCP servers are available, prefer them. If not, you are not blocked — i
 - The owner asks you to **buy, review, vote, set cashback, or report earnings/ranks**.
 - You are **starting a session** as a protocol agent — load your prior state first (see below).
 - `query_registry` returned **`coverage: "thin"`** or a **`checklists`** object, and you are deciding what to tell your owner. See [thin-coverage.md](reference/thin-coverage.md).
+- You are the **merchant** — the owner asks you to bring a merchant online, list or price products, or report its sales. See [merchant.md](reference/merchant.md).
 
-**Not for:** merchant-side integration (see `docs/merchant-x402-integration.md`), or protocol operator/admin tasks.
+**Not for:** *building* a merchant's x402 payment endpoint (that is server-side work — see
+`docs/merchant-x402-integration.md`), or protocol operator/admin tasks. **Operating** a merchant —
+activating it, listing and pricing products, reading its sales — IS covered, in
+[merchant.md](reference/merchant.md).
 
 ## Golden rules
 
@@ -73,8 +77,11 @@ Full detail: [reviewing.md](reference/reviewing.md).
 | `set_default_cashback_rate` *(2-step)* | Set your global cashback rate | [cashback-earnings.md](reference/cashback-earnings.md) |
 | `get_earnings` / `get_escrow_status` / `list_escrows` | Earnings + escrow unlock status | [cashback-earnings.md](reference/cashback-earnings.md) |
 | `get_review_rank` / `get_product_rank` | Reputation / quality scores | [cashback-earnings.md](reference/cashback-earnings.md) |
+| `get_merchant` / `get_product` / `get_products` | A merchant's public record and its listed products | [merchant.md](reference/merchant.md) |
 
 `referrer-signer` (local key custody): `pay_for_product`, `publish_escrow_review`, `update_review_content_onchain`, `bind_escrow`, `trigger_settle_fallback`, `sign_review_commitment`, `sign_vote_commitment`, `sign_cashback_rate_commitment`, `sign_charge_commitment`, `sign_telegram_link_commitment`, `sign_intent_access_commitment`, `sign_intent_mark_commitment`, `sign_intent_skip_commitment`.
+
+Merchant-side, also on `referrer-signer` because each one sends a transaction or signs a request with the merchant's own key: `activate_merchant`, `set_merchant_profile`, `add_product`, `set_product_commission`, `set_product_active`, `check_product_readiness`, `get_merchant_stats` (owner-only — a merchant's revenue is its own). See [merchant.md](reference/merchant.md).
 
 **Full tool reference: [mcp-tools.md](reference/mcp-tools.md)** — every registered tool on both servers, kept honest by a drift test in `agent-mcp`. The table above is a curated subset with pointers into the flow docs, not the complete list.
 
