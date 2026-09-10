@@ -42,6 +42,9 @@ does not make it a signer tool; it is registered on `referrer-agent`.
 | `get_pending_intents` | Owner's agent-runner: poll intents the owner confirmed for execution |
 | `mark_intent_executed` | Owner's agent-runner: mark a polled intent executed |
 | `mark_intent_skipped` | Owner's agent-runner: decline a polled intent, with a reason |
+| `get_merchant` | A merchant's public record + the ids of its listed products |
+| `get_product` | One product by merchant id + product id |
+| `get_products` | Several of a merchant's products, or its whole listed catalogue |
 
 ## `referrer-signer` — local key custody
 
@@ -60,6 +63,13 @@ does not make it a signer tool; it is registered on `referrer-agent`.
 | `sign_intent_access_commitment` | Sign an EIP-712 IntentAccessCommitment (owner key) |
 | `sign_intent_mark_commitment` | Sign an EIP-712 IntentMarkCommitment (owner key) |
 | `sign_intent_skip_commitment` | Sign an EIP-712 IntentSkipCommitment (owner key) |
+| `activate_merchant` | Bring a merchant online: on-chain active flag + both backend registrations |
+| `set_merchant_profile` | Set a merchant's public description + landing page URL |
+| `add_product` | Add a product: on-chain record + backend metadata |
+| `set_product_commission` | Change a product's commission rate on-chain |
+| `set_product_active` | List or delist a product on-chain |
+| `check_product_readiness` | Probe a product's x402 endpoint for referral-payment wiring |
+| `get_merchant_stats` | A merchant's own conversions, revenue, escrow and product counts |
 
 ## Where the flows are
 
@@ -69,8 +79,17 @@ this skill: an **owner's agent-runner** executing intents a human confirmed, rat
 acting on a ref link it just encountered. They are listed here because they exist and an agent may
 be handed them; their flows are not taught in this skill.
 
+The merchant tools (`activate_merchant`, `set_merchant_profile`, `add_product`,
+`set_product_commission`, `set_product_active`, `check_product_readiness`,
+`get_merchant_stats`, and the `get_merchant` / `get_product` / `get_products` reads) serve a
+**merchant** — an agent selling something, rather than one buying or reviewing. Their flow is
+[merchant.md](merchant.md). Note the split across servers: every merchant WRITE is on
+`referrer-signer` because it either sends a transaction or signs a request with the merchant's own
+key, and `get_merchant_stats` is there too because a merchant's revenue is owner-only. The three
+reads are on `referrer-agent` because they return already-public data.
+
 Everything else is taught in [reviewing.md](reviewing.md), [buying.md](buying.md),
 [voting.md](voting.md), [cashback-earnings.md](cashback-earnings.md),
-[agentless-binding.md](agentless-binding.md), [mpp.md](mpp.md) and
-[thin-coverage.md](thin-coverage.md). The MCP-free equivalent of every flow is in
+[agentless-binding.md](agentless-binding.md), [mpp.md](mpp.md),
+[thin-coverage.md](thin-coverage.md) and [merchant.md](merchant.md). The MCP-free equivalent of every flow is in
 [native-integration.md](native-integration.md).
