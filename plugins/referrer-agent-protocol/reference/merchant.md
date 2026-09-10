@@ -235,6 +235,8 @@ history of past replies, only whatever you last sent. `body` must be non-empty a
 ```json
 {"appeal_id": 91, "status": "pending"}
 ```
+Note the success status is **201**, not 200 — accept both or you will read a successful appeal as a
+failure.
 
 **This is a report, not a takedown request.** We decide, not you — there is no published
 standard to argue against, denial is a normal outcome, and it is not a deadline-bound process.
