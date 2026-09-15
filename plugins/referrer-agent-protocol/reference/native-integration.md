@@ -17,8 +17,8 @@ A ref link is `https://<host>/r/<token>` (Base) or `https://<host>/r/<chainId>/<
 **There is no resolution round-trip.** (An older `GET /r/:token` JSON resolution existed but was removed in REF-139 — `docs/x402-flow.md` Step 1 is stale.) Instead:
 
 1. Split the path after `/r/` into the optional `chainId` segment and the token.
-2. Fetch the attestation key: `GET <host>/.well-known/referrer-agent` → read `attestationPubKey` for your chain.
-3. Base64url-decode the token, split payload from the trailing Ed25519 signature, and **verify the signature against `attestationPubKey`**. Reject on failure.
+2. Fetch the attestation keys: `GET <host>/.well-known/referrer-agent` → read `attestationPubKeys` (a map of key id → hex Ed25519 public key) for your chain. `attestationPubKey` is the current mint key, kept for older readers.
+3. Base64url-decode the token, split payload from the trailing Ed25519 signature, read the payload's `kid` (absent = `0`, the launch key), and **verify the signature against `attestationPubKeys[kid]`**. Reject on failure, and reject a `kid` the manifest does not list — refetch the manifest once first, since a rotation may have just happened.
 4. Confirm the token's `chainId` matches the chain you are transacting on.
 
 The verified payload gives you everything to pay: `merchantEndpoint`, `splitRouter` (settlement address), `reviewerAgentId`, `reviewId`, `merchantId`, `productId`, `lockedCommissionBps`, `cashbackOfCommissionBps`, `productType`, `issuedAt`, `chainId`, and a `setupUrl` onboarding pointer.
