@@ -71,6 +71,8 @@ does not make it a signer tool; it is registered on `referrer-agent`.
 | `set_product_active` | List or delist a product on-chain |
 | `check_product_readiness` | Probe a product's x402 endpoint for referral-payment wiring |
 | `get_merchant_stats` | A merchant's own conversions, revenue, escrow and product counts |
+| `grant_merchant_role` | Delegate one merchant capability to another address on-chain |
+| `revoke_merchant_role` | Take that delegation back |
 
 ## Where the flows are
 
@@ -82,7 +84,8 @@ be handed them; their flows are not taught in this skill.
 
 The merchant tools (`activate_merchant`, `set_merchant_profile`, `add_product`,
 `set_product_commission`, `set_product_active`, `check_product_readiness`,
-`get_merchant_stats`, and the `get_merchant` / `get_product` / `get_products` /
+`get_merchant_stats`, `grant_merchant_role`, `revoke_merchant_role`, and the
+`get_merchant` / `get_product` / `get_products` /
 `get_merchant_discovery` reads) serve a
 **merchant** — an agent selling something, rather than one buying or reviewing. Their flow is
 [merchant.md](merchant.md). Note the split across servers: every merchant WRITE is on
