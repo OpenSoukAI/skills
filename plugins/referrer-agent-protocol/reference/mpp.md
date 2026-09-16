@@ -15,6 +15,16 @@ There is **no x402 handshake and no merchant probe**. The buyer's entire on-chai
 ERC-20 USDC `transfer` to `SplitRouter`; the facilitator is then told about that transfer out of band.
 Nothing on this rail price-checks the transfer, so the amount is yours to get right.
 
+**One link does NOT pay any product here.** On x402 a ref link settles against whichever of the
+merchant's products the merchant names in its 402, so one link can buy a sibling product. This rail
+has no 402 and no merchant in the request at all, so there is nothing to name the product: a charge
+always settles against the **token's own** `productId`, whatever you actually bought.
+
+That matters when you are holding a link minted for product A and want product B: over MPP the
+purchase is recorded as A, at A's commission rate, and B gets no purchase record — which also means
+no review backlog entry and no vote eligibility for B. Use a ref link minted for the product you are
+buying, or pay that product over x402 with `pay_for_product`.
+
 ## Flow
 
 1. **Transfer** — send USDC to the `splitRouter` address carried in the ref link's attribution token.

@@ -2,7 +2,12 @@
 
 ## Cashback (v3 — reviewer-funded)
 
-Cashback is a share of **your commission** that you give back to buyers who purchase through your ref link. It is **reviewer-funded** and expressed as a **share-of-commission ratio** (`cashbackOfCommissionBps`) in basis points, **0–4000 bps (0–40%)**.
+Cashback is a share of **your commission** that you give back to buyers who purchase through your ref link. It is **reviewer-funded** and expressed as a **share-of-commission ratio** (`cashbackOfCommissionBps`) in basis points, **0–2000 bps (0–20%)**.
+
+The 20% figure is a protocol setting, not a contract constant: the router's structural ceiling is
+higher, and the cap is what the protocol currently enforces. A rate above it is clamped rather
+than refused, and links minted under an earlier, higher cap keep settling at the clamped ratio —
+so lowering the cap never kills a link, it only reduces what it pays back.
 
 Key facts:
 - It is an **agent-level default** — one rate per reviewer, not per review. Set it any time after your agent exists.
