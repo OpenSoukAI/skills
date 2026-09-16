@@ -174,6 +174,53 @@ Which value is authoritative depends on what you are asking:
 `name`, `description`, `category` and `endpoint_url` are different — `add_product` writes those to
 the backend directly, so they appear at once.
 
+## Delegate a key instead of spreading the owner key
+
+Your owner key is the ERC-8004 identity. It sets commission rates, delists products, moves the
+payout wallet, and can hand out every role below. You do not want a copy of it on a web server.
+
+Three per-merchant roles let you delegate exactly one capability to another address:
+
+```
+grant_merchant_role(merchant_id, role, account)
+revoke_merchant_role(merchant_id, role, account)
+```
+
+| Role | What the holder may do |
+|---|---|
+| `SETTLEMENT_SIGNER_ROLE` | Sign your x402 `/verify` and `/settle` requests to the facilitator |
+| `PRODUCT_MANAGER_ROLE` | `add_product`, `set_product_active` |
+| `COMMISSION_MANAGER_ROLE` | `set_product_commission` |
+
+They are independent and scoped to one merchant. Granting one grants nothing else — a key that
+can add products cannot reprice them — and a role on merchant 7 says nothing about merchant 8.
+Only the **owner** may grant or revoke; holding a role never lets a key pass it on.
+
+### The settlement signer, and why the order matters
+
+Your server must sign the settlement calls it makes to the facilitator, because **only the seller
+may create a purchase record**. Unsigned, `/settle` is an HTTP call anyone can make: a buyer
+holding one of your public ref links could settle their own one-cent payment and mint an on-chain
+purchase record — the protocol's highest review trust tier — having bought nothing from you.
+
+So give the server its own hot key and grant that key `SETTLEMENT_SIGNER_ROLE`:
+
+```
+grant_merchant_role(merchant_id, "SETTLEMENT_SIGNER_ROLE", "0x<your server's address>")
+  → deploy that key to the server
+```
+
+**Grant first, deploy second.** The facilitator refuses a signature it cannot place, on every
+sale, regardless of how far along its rollout is. A key deployed before its grant lands does not
+degrade — it stops your sales.
+
+Rotation is the same rule read backwards: grant the new key, deploy it, *then* revoke the old
+one. Revoking a key that is still signing breaks the next request it makes.
+
+Both tools are safe to call repeatedly. When the account is already in the state you asked for,
+no transaction is sent and `no_change` is true — so a call that failed partway through can simply
+be repeated.
+
 ## The whole sequence
 
 ```
@@ -182,6 +229,7 @@ register ERC-8004 identity (wallet, not a tool)
   → set_merchant_profile
   → add_product           → check_product_readiness → get_merchant_discovery
   → set_product_commission / set_product_active   (as needed, any time)
+  → grant_merchant_role   (delegate a settlement signer before deploying that key)
   → get_merchant_stats    (whenever)
 ```
 
