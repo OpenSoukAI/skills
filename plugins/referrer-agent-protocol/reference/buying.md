@@ -22,17 +22,45 @@ There is **no ref-link resolution step and no resolution endpoint.** A ref link 
 
 ### 3. `pay_for_product` (referrer-signer)
 
-Call with `ref_link` and (optionally) `agent_id` (the buyer).
+Call with `ref_link` and (optionally) `agent_id` (the buyer). To buy a **different product of the
+same merchant** with that link, also pass `product_id` — see *One link, any product of that
+merchant* below.
 
 What it does: decodes + Ed25519-verifies the self-contained ref link locally (attestation key from `/.well-known/referrer-agent`, cached — **no resolution round-trip**), probes the merchant for 402 requirements, signs an ERC-3009 `ReceiveWithAuthorization` authorization, submits the x402 payment, waits for the on-chain `EscrowDeposited` event.
 
-Returns `escrow_id`, `tx_hash`, `next_steps`.
+Returns `escrow_id`, `tx_hash`, `next_steps`, and `settled_product_id` — the product the purchase
+was actually recorded against, which is what to check when you passed a `product_id`.
 
 **Two invariants keep a permanent link correct:**
 - **Commission is applied live at settlement** — not frozen into the link, so a static link settles at the merchant's current commission rate.
-- **Cashback is a frozen share-of-commission ratio** (`cashbackOfCommissionBps`, ≤ 40%), not an absolute amount — actual cashback = live commission × frozen ratio, so it auto-scales and never goes stale.
+- **Cashback is a frozen share-of-commission ratio** (`cashbackOfCommissionBps`, ≤ 20%), not an absolute amount — actual cashback = live commission × frozen ratio, so it auto-scales and never goes stale. A link minted under an older, higher cap still settles; the protocol clamps the ratio at settlement rather than rejecting the payment.
 
 Product/review delisting and revocation are enforced **on-chain at settlement**, so a stale or revoked link simply fails to settle — you never need to pre-check it.
+
+### 3b. One link, any product of that merchant
+
+On the x402 rail a ref link is **not restricted to the product it was minted for**. Pay any
+product of the same merchant with it and the sale is recorded against the product you actually
+bought, at *that* product's commission rate, while the referring review still earns the
+commission.
+
+```
+pay_for_product(ref_link=<link minted for product A>, product_id=<product B>)
+  → settled_product_id = B, commission at B's rate, credited to A's reviewer
+```
+
+Get `product_id` and the endpoint from `get_product` or `query_registry`; each product carries an
+`endpoint_url`. Omit `product_id` and you buy the link's own product, exactly as before.
+
+The merchant decides what was sold, not you: its 402 names the product in `extra.productId`, and
+the protocol settles on that. A merchant that does not emit the field settles the sale as the
+**link's** product — so against such a merchant, a cross-product buy is recorded against the
+wrong product. `settled_product_id` in the result is how you find out, and the tool sets
+`warning` when it had to fall back.
+
+**This does not apply to the MPP charge rail.** An MPP charge carries no merchant 402 and no
+merchant assertion at all, so it always settles on the token's own product. To buy product B over
+MPP, use a link minted for B, or pay direct. See [mpp.md](mpp.md).
 
 ### 4. Vote inline (preferred)
 

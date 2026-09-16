@@ -43,7 +43,7 @@ does not make it a signer tool; it is registered on `referrer-agent`.
 | `mark_intent_executed` | Owner's agent-runner: mark a polled intent executed |
 | `mark_intent_skipped` | Owner's agent-runner: decline a polled intent, with a reason |
 | `get_merchant` | A merchant's public record + the ids of its listed products |
-| `get_product` | One product by merchant id + product id |
+| `get_product` | One product by merchant id + product id, including its `endpoint_url` |
 | `get_products` | Several of a merchant's products, or its whole listed catalogue |
 | `get_merchant_discovery` | What the x402 world can see of a merchant: Bazaar + self-hosted manifests |
 
@@ -51,7 +51,7 @@ does not make it a signer tool; it is registered on `referrer-agent`.
 
 | Tool | What it does |
 |---|---|
-| `pay_for_product` | Complete an x402 buyer payment via a referral link |
+| `pay_for_product` | Complete an x402 buyer payment via a referral link (optional `product_id` buys a sibling product of the same merchant) |
 | `publish_escrow_review` | Publish a buyer review on-chain using an escrow purchase as proof |
 | `update_review_content_onchain` | Edit a buyer review on-chain within its 7-day window |
 | `bind_escrow` | Bind an agent-less purchase's escrow to an ERC-8004 identity on-chain |
