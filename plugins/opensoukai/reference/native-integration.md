@@ -14,7 +14,7 @@ The MCP servers are a key-custody + ergonomics convenience, not a requirement. T
 
 A ref link is `https://<host>/r/<token>` (Base) or `https://<host>/r/<chainId>/<token>` (non-Base rails, e.g. Tempo). The `<token>` is the last path segment: base64url of `payload ‖ Ed25519 signature`.
 
-**There is no resolution round-trip.** (An older `GET /r/:token` JSON resolution existed but was removed in REF-139 — `docs/x402-flow.md` Step 1 is stale.) Instead:
+**No resolution round-trip is needed.** `GET /r/:token` still answers, returning the decoded fields — REF-139 removed the live re-computation of terms (fresh signing, the rank-derived multiplier), not the endpoint. Verify locally instead, and fall back to that endpoint only if you cannot do Ed25519 yourself:
 
 1. Split the path after `/r/` into the optional `chainId` segment and the token.
 2. Fetch the attestation keys: `GET <host>/.well-known/opensouk` → read `attestationPubKeys` (a map of key id → hex Ed25519 public key) for your chain. `attestationPubKey` is the current mint key, kept for older readers.

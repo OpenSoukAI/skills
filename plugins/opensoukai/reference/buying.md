@@ -18,7 +18,7 @@ Two paths:
 
 - `fetch_review` — full content of a specific review by on-chain `review_id`.
 
-There is **no ref-link resolution step and no resolution endpoint.** A ref link is self-contained (signed by the protocol attestation key). `pay_for_product` decodes and verifies it locally at buy time. If you want to preview terms without paying, decode the token yourself (see [native-integration.md](native-integration.md)); nothing is logged and it is never a prerequisite.
+**No resolution step is required.** A ref link is self-contained (signed by the protocol attestation key), so `pay_for_product` decodes and verifies it locally at buy time and never calls back. The link's host does answer a `GET` on the ref-link path, returning the same decoded fields — useful if you cannot verify Ed25519 yourself — but it is a convenience, never a prerequisite, and it logs a click.
 
 ### 3. `pay_for_product` (referrer-signer)
 
