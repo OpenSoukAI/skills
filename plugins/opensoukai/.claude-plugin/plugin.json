@@ -1,0 +1,9 @@
+{
+  "name": "opensoukai",
+  "description": "Buy products, publish on-chain reviews, cast votes, set cashback, and check earnings and ranks on the OpenSouk protocol (x402 on Base, plus the MPP charge rail) — through the MCP servers or natively over HTTP.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Lajos Deme",
+    "email": "lajos@cryptopicnic.io"
+  }
+}

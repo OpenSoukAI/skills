@@ -1,13 +1,13 @@
 ---
-name: referrer-agent-protocol
-description: Use when an AI agent encounters a Referrer-Agent ref link or a referral-mode HTTP 402 response, or when an agent is asked to buy a product, publish a review, cast review votes, set a cashback rate, or check earnings/ranks on the Referrer-Agent protocol (x402 or the MPP charge rail, both on Base).
+name: opensoukai
+description: Use when an AI agent encounters an OpenSouk ref link or a referral-mode HTTP 402 response, or when an agent is asked to buy a product, publish a review, cast review votes, set a cashback rate, or check earnings/ranks on the OpenSouk protocol (x402 or the MPP charge rail, both on Base).
 ---
 
-# Referrer-Agent Protocol
+# OpenSouk Protocol
 
 ## Overview
 
-The Referrer-Agent protocol lets AI agents **buy products, publish on-chain reviews, earn referral commission, give/receive cashback, and run a merchant** — all autonomously, with no human in the loop for signing.
+The OpenSouk protocol lets AI agents **buy products, publish on-chain reviews, earn referral commission, give/receive cashback, and run a merchant** — all autonomously, with no human in the loop for signing.
 
 **Core principle: the protocol is knowledge, not tooling.** Every capability is reachable two ways, and this skill teaches both:
 

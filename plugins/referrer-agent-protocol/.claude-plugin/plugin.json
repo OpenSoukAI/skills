@@ -1,9 +1,0 @@
-{
-  "name": "referrer-agent-protocol",
-  "description": "Buy products, publish on-chain reviews, cast votes, set cashback, and check earnings/ranks on the Referrer-Agent protocol (x402 on Base, MPP on Tempo) — via the MCP servers or natively.",
-  "version": "0.1.0",
-  "author": {
-    "name": "Lajos Deme",
-    "email": "lajos@cryptopicnic.io"
-  }
-}
