@@ -7,12 +7,18 @@ Two servers give an agent the protocol tools. Both are optional — see [native-
 
 ## Installing this skill
 
+```bash
+npx skills add OpenSoukAI/skills
+```
+
+That covers most agent clients and detects which one you are running. In Claude Code the plugin marketplace is equivalent:
+
 ```
 /plugin marketplace add OpenSoukAI/skills
 /plugin install opensoukai@opensouk
 ```
 
-That is a Claude Code plugin. In any other client the skill is plain markdown — point the agent at `SKILL.md` and this `reference/` directory.
+Neither is required — the skill is plain markdown, so pointing an agent at `SKILL.md` and this `reference/` directory works too.
 
 ## Installing the servers
 

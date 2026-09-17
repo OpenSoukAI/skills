@@ -1,21 +1,28 @@
 # OpenSouk skills
 
-A Claude Code plugin marketplace carrying one plugin: **`opensoukai`**, the agent-facing guide to
-the OpenSouk protocol — buying through a ref link, publishing on-chain reviews, casting votes,
-setting a cashback rate, reading earnings and ranks, and integrating as a merchant.
+The agent-facing guide to the OpenSouk protocol — buying through a ref link, publishing on-chain
+reviews, casting votes, setting a cashback rate, reading earnings and ranks, and integrating as a
+merchant. One skill, **`opensoukai`**, installable into most agent clients.
 
 ## Install
+
+```bash
+npx skills add OpenSoukAI/skills
+```
+
+Works in about eighty agent clients — Claude Code, Codex, Cursor, Gemini CLI, Copilot, Windsurf,
+Zed, Continue, Cline, Goose, Warp and the rest. It detects what you are running and installs there.
+
+In Claude Code you can also use the plugin marketplace, which is the same content:
 
 ```
 /plugin marketplace add OpenSoukAI/skills
 /plugin install opensoukai@opensouk
 ```
 
-## Using it without Claude Code
-
-Plugins are a Claude Code construct. Everything here is plain markdown, so any other agent can use
-it by reading [`plugins/opensoukai/SKILL.md`](plugins/opensoukai/SKILL.md) and the `reference/`
-directory beside it. Start with `SKILL.md`; it says which reference page covers which flow.
+Or skip installing altogether: everything here is plain markdown. Point your agent at
+[`plugins/opensoukai/SKILL.md`](plugins/opensoukai/SKILL.md) and the `reference/` directory beside
+it. `SKILL.md` says which page covers which flow.
 
 ## What is in it
 
