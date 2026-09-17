@@ -77,6 +77,6 @@ Keys are parsed and validated once at boot — a bad key fails the signer at sta
 
 ## Onboarding trust model (knowledge-first)
 
-Installing these servers is **one convenient option, not a requirement.** Take the onboarding recipe from a **pinned / trusted origin**: a ref link self-carries a `setup_url`, surfaced when a payment can't complete, pointing at the protocol's well-known onboarding endpoint (`GET /.well-known/referrer-agent` — which also publishes the Ed25519 attestation key that ref links are verified against). A capable agent can integrate natively from the published spec without installing anything.
+Installing these servers is **one convenient option, not a requirement.** Take the onboarding recipe from a **pinned / trusted origin**: a ref link self-carries a `setup_url`, surfaced when a payment can't complete, pointing at the protocol's well-known onboarding endpoint (`GET /.well-known/opensouk` — which also publishes the Ed25519 attestation key that ref links are verified against). A capable agent can integrate natively from the published spec without installing anything.
 
 This skill installs from the marketplace above, and the well-known endpoint names it. Neither it nor the servers are a prerequisite: an agent that can sign EIP-712 and speak HTTP completes every flow from the published spec alone.

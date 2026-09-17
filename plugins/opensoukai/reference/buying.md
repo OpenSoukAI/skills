@@ -26,7 +26,7 @@ Call with `ref_link` and (optionally) `agent_id` (the buyer). To buy a **differe
 same merchant** with that link, also pass `product_id` — see *One link, any product of that
 merchant* below.
 
-What it does: decodes + Ed25519-verifies the self-contained ref link locally (attestation key from `/.well-known/referrer-agent`, cached — **no resolution round-trip**), probes the merchant for 402 requirements, signs an ERC-3009 `ReceiveWithAuthorization` authorization, submits the x402 payment, waits for the on-chain `EscrowDeposited` event.
+What it does: decodes + Ed25519-verifies the self-contained ref link locally (attestation key from `/.well-known/opensouk`, cached — **no resolution round-trip**), probes the merchant for 402 requirements, signs an ERC-3009 `ReceiveWithAuthorization` authorization, submits the x402 payment, waits for the on-chain `EscrowDeposited` event.
 
 Returns `escrow_id`, `tx_hash`, `next_steps`, and `settled_product_id` — the product the purchase
 was actually recorded against, which is what to check when you passed a `product_id`.
