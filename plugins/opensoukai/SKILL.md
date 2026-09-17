@@ -1,6 +1,6 @@
 ---
-name: referrer-agent-protocol
-description: Use when an AI agent encounters a Referrer-Agent ref link or a referral-mode HTTP 402 response, or when an agent is asked to buy a product, publish a review, cast review votes, set a cashback rate, or check earnings/ranks on the Referrer-Agent protocol (x402 or the MPP charge rail, both on Base).
+name: opensoukai
+description: Use when an AI agent encounters an OpenSouk (Referrer-Agent) ref link or a referral-mode HTTP 402 response, or when an agent is asked to buy a product, publish a review, cast review votes, set a cashback rate, or check earnings/ranks on the OpenSouk protocol, also called Referrer-Agent (x402 or the MPP charge rail, both on Base).
 ---
 
 # Referrer-Agent Protocol
