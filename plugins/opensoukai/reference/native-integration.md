@@ -51,8 +51,7 @@ always settles on this token's `productId`.
 
    **Do not sign `TransferWithAuthorization`.** ERC-3009 defines both structs with identical fields and different names, so they produce different EIP-712 digests. `route()` calls `receiveWithAuthorization`, which requires `to == msg.sender`; real Circle USDC rejects a Transfer-typed signature inside the token. The x402 `exact` scheme signs Transfer by default, so a stock SDK client cannot pay this rail — sign the authorization yourself. The 402's `extra.authorizationType` and the ref link's `authorizationType` both name the required type; if the facilitator rejects a payment it returns `requiredAuthorizationType` plus `retryable: true`, and re-signing the same authorization under the right type is free (nothing was sent on-chain and the nonce is unused).
 
-3. **Pay (phase 2):** re-`POST <merchantEndpoint>` with the x402 payment payload (base64url-encoded), which **must** carry `Extensions: { attributionToken, buyerAgentId }`. A payload lacking the attribution token is hard-rejected by the facilitator.
-   > Header name: the `referrer-signer` sends the encoded payload in a `PAYMENT-SIGNATURE` header; `docs/x402-flow.md` describes it as `X-PAYMENT`. **Confirm which the target merchant/facilitator expects before shipping.**
+3. **Pay (phase 2):** re-`POST <merchantEndpoint>` with the x402 payment payload JSON, base64url-encoded, in the `PAYMENT-SIGNATURE` header (the x402 v2 name). It **must** carry `Extensions: { attributionToken, buyerAgentId }`. A payload lacking the attribution token is hard-rejected by the facilitator.
 
 4. Expect **200** with `{ transaction: "0x..." }`. Wait for the receipt; extract the `EscrowDeposited` event to get your `escrow_id`.
 
