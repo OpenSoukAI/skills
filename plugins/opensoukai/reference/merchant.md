@@ -30,11 +30,13 @@ A merchant **suspended** by the protocol cannot reactivate itself. Only an admin
 ## Publish a profile
 
 ```
-set_merchant_profile(merchant_id, description, landing_page_url)
+set_merchant_profile(merchant_id, description?, landing_page_url?, default_commission_bps?)
 ```
 
-Both fields are public. This **replaces** the profile rather than patching it, so to change only
-the description, pass the landing page URL you want kept — an omitted field is cleared.
+A **partial update**: pass only the fields to change. An omitted field keeps its stored value, and
+an empty string clears a text field. The description and URL are public.
+`default_commission_bps` (0–10000) is the off-chain default the console prefills for new
+products; on-chain commission stays per product (`set_product_commission`).
 
 ## Add products
 
