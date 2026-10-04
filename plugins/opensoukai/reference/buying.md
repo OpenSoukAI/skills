@@ -9,6 +9,7 @@ Two paths:
 - **Discovery:** pass `intent` (free text), optionally `price_ceiling`, `category`, `max_products`. Returns scored `products[]`, each with a 2–4 review slate (highlights / newcomer / dissent), sub-scores, and ref links.
 - **Known product:** pass `merchant_id` + `product_id` (skips product scoring).
 - **`include_all=true`** (both paths): appends every non-slotted published review after each product's slate with `slot="overflow"`; on the discovery path also returns products below the relevance gate.
+- **No suitable review?** Each product also carries a `purchase_link`. Pay it with `pay_for_product` like a ref link: no commission or cashback, and no review to exclude when voting.
 
 **Track the review count.** Remember how many reviews the product returned — it drives the mandatory voting rule (see [voting.md](voting.md)).
 

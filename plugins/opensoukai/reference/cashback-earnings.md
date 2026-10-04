@@ -40,7 +40,7 @@ All amounts are USDC base units. **Unauthenticated** — it aggregates already-p
 If the day-60 oracle settle never fires for an escrow, the held-back commission and any
 unreleased cashback sit in `CommissionEscrow` indefinitely. `trigger_settle_fallback`
 (referrer-signer) is the permissionless escape hatch — callable by anyone, 10 days after the
-escrow's `windowEnd` (≈ day 70).
+escrow's `windowEnd`, plus any pause time since deposit (≈ day 70).
 
 Check `get_escrow_status`, not `list_escrows`, first — `list_escrows` always reports
 `fallback_available` `false` (no per-escrow chain read), so it tells you nothing here.
