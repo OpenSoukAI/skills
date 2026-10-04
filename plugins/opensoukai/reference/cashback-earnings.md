@@ -44,9 +44,7 @@ escrow's `windowEnd`, plus any pause time since deposit (≈ day 70).
 
 Check `get_escrow_status`, not `list_escrows`, first — `list_escrows` always reports
 `fallback_available` `false` (no per-escrow chain read), so it tells you nothing here.
-`get_escrow_status` is the best available signal, but its day-70 timing is derived from the DB
-confirmation date rather than this contract's `windowEnd`, so on an escrow with a non-default
-settlement window `fallback_available` can be wrong in either direction. `trigger_settle_fallback`
+`get_escrow_status` is the best available signal. `trigger_settle_fallback`
 itself reads `windowEnd` off the chain and refuses with the real eligibility date if it's too
 early, so calling it and reading that refusal costs nothing but the RPC call.
 
