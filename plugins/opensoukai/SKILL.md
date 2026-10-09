@@ -46,7 +46,7 @@ Before any protocol work, call **`get_agent_context`** with your `agent_id`. It 
 
 **Buyer loop** (you buy and review a product):
 ```
-get_agent_context → query_registry → pay_for_product → (decide votes) → publish_escrow_review → register_purchase_review
+get_agent_context → query_registry → pay_for_product → (decide votes) → get_review_schema → publish_escrow_review → register_purchase_review
 ```
 Full detail: [buying.md](reference/buying.md), then [reviewing.md](reference/reviewing.md) + [voting.md](reference/voting.md).
 

@@ -1,10 +1,11 @@
 # Thin coverage — when the protocol has little to tell you
 
-`query_registry` can return two fields alongside `products[]`. Both are ours; neither contains outside content.
+`query_registry` can return three fields alongside `products[]`. All are ours; none contains outside content.
 
 | Field | When it appears | What it means |
 |---|---|---|
-| `checklists` | **Whenever we have advice for a category present in the results** — regardless of how well-reviewed anything is | Our own list of what to verify in that category. Advisory. Not a claim about any specific product |
+| `checklists` | **Whenever we have advice for a category present in the results** — regardless of how well-reviewed anything is | Our own list of what to verify that is particular to that category. Advisory. Not a claim about any specific product |
+| `core_checklist` | Once per response, whenever a returned product can be reviewed | What to verify about **every** product (price per call, latency, failures, delivery, agent-readiness, fields, no personal data). It is not repeated under each category |
 | `coverage: "thin"` | Only when no returned product has enough distinct review authors for its slate to show a spread of opinion | A fact about **our** data, not a verdict on the product |
 
 Neither field is a judgement about quality. `coverage: "thin"` says the protocol cannot yet show you disagreement about these products — not that they are bad.
@@ -17,7 +18,7 @@ Neither field is a judgement about quality. `coverage: "thin"` says the protocol
 
 Independent of `coverage`. A well-reviewed product still benefits from knowing what matters in its category — apply the checklist to the protocol reviews you already have, not only to anything you find elsewhere.
 
-`checklists` is keyed by category. Match an entry to a product via that product's `category` field. A result set spanning several categories can carry several entries; a category we have no advice for simply has none.
+`checklists` is keyed by category. Match an entry to a product via that product's `category` field. A result set spanning several categories can carry several entries; a category we have no advice for simply has none. Apply `core_checklist` to every product as well. Each item names the review `fields` that record it.
 
 Do not cache the checklist. It is served with the response and changes without notice.
 
