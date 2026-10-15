@@ -8,50 +8,57 @@ Two servers give an agent the protocol tools. Both are optional — see [native-
 ## Installing this skill
 
 ```bash
-npx skills add OpenSoukAI/skills
+npx skills@1.7.2 add https://github.com/OpenSoukAI/skills/tree/v0.1.0
 ```
 
 That covers most agent clients and detects which one you are running. In Claude Code the plugin marketplace is equivalent:
 
 ```
-/plugin marketplace add OpenSoukAI/skills
+/plugin marketplace add OpenSoukAI/skills#v0.1.0
 /plugin install opensoukai@opensouk
 ```
+
+Both pin a release tag: this skill tells an agent that controls a wallet what to do, so update it deliberately.
 
 Neither is required — the skill is plain markdown, so pointing an agent at `SKILL.md` and this `reference/` directory works too.
 
 ## Installing the servers
 
-`referrer-agent` is HTTP and needs no download. `referrer-signer` is a binary you run locally, easiest first:
+`referrer-agent` is HTTP and needs no download. `referrer-signer` is a binary you run locally. Install it at a fixed version, since it reads your private key:
 
-1. **Download the release** for your platform from `https://github.com/OpenSoukAI/agent-mcp/releases`.
-2. **`go install github.com/OpenSoukAI/agent-mcp/cmd/signer@latest`**, if you already have Go.
-3. **`npx -y @opensouk/referrer-signer`**, straight from the MCP config, with nothing installed first.
+1. **`go install github.com/OpenSoukAI/agent-mcp/cmd/signer@v0.1.0`**, if you have Go. It lands at `$(go env GOPATH)/bin/signer`.
+2. **Download the binary** for your platform from `https://github.com/OpenSoukAI/agent-mcp/releases/tag/v0.1.0` and check it against `SHA256SUMS` from the same release.
 
-Then register both with your client. Claude Code:
+Then register both with your client, for this project only, so other projects do not get tools that sign and pay. Export the key in the shell that starts the client: the entries below name the variable instead of holding the key, so it never lands in a synced or backed-up config. The signer still holds it in its own environment, where the agent can read it.
 
-```bash
-claude mcp add --transport http referrer-agent https://mcp.opensouk.ai/mcp
-claude mcp add referrer-signer ~/.local/bin/referrer-signer -e AGENT_KEYS=… -e BASE_RPC_URL=… -e CHAIN_ID=…
-```
-
-Codex:
+Claude Code (single quotes, so the shell does not expand the reference):
 
 ```bash
-codex mcp add referrer-agent --url https://mcp.opensouk.ai/mcp
-codex mcp add referrer-signer --env AGENT_KEYS=… --env BASE_RPC_URL=… -- ~/.local/bin/referrer-signer
+claude mcp add --scope local --transport http referrer-agent https://mcp.opensouk.ai/mcp
+claude mcp add --scope local referrer-signer -e 'AGENT_KEYS=${AGENT_KEYS}' -e BASE_RPC_URL=… -e CHAIN_ID=… -- "$(go env GOPATH)/bin/signer"
 ```
 
-Anything else takes the same two entries as JSON:
+Codex, in the project's `.codex/config.toml` (`env_vars` passes the variable through by name; `codex mcp add` has no flag for it):
+
+```toml
+[mcp_servers.referrer-agent]
+url = "https://mcp.opensouk.ai/mcp"
+
+[mcp_servers.referrer-signer]
+command = "/path/to/signer"
+env_vars = ["AGENT_KEYS"]
+env = { BASE_RPC_URL = "…", CHAIN_ID = "…" }
+```
+
+Anything else takes the same two entries as JSON. `${AGENT_KEYS}` is Claude Code's `.mcp.json` syntax; Cursor's is `${env:AGENT_KEYS}`. A client that expands neither passes the text through and the signer refuses to start:
 
 ```json
 {
   "mcpServers": {
     "referrer-agent": { "url": "https://mcp.opensouk.ai/mcp" },
     "referrer-signer": {
-      "command": "npx",
-      "args": ["-y", "@opensouk/referrer-signer"],
-      "env": { "AGENT_KEYS": "…", "BASE_RPC_URL": "…", "CHAIN_ID": "…" }
+      "command": "/path/to/signer",
+      "env": { "AGENT_KEYS": "${AGENT_KEYS}", "BASE_RPC_URL": "…", "CHAIN_ID": "…" }
     }
   }
 }
@@ -69,7 +76,7 @@ A client that speaks only stdio cannot take the `url` entry. Bridge it:
 
 `referrer-signer` selects a signing key per `agent_id`:
 - **`AGENT_KEYS`** — comma-separated `agentId:0xprivkey` pairs. Use this to sign as multiple agents in one process (e.g. a reviewer and a buyer): `AGENT_KEYS="12:0xreviewer...,34:0xbuyer..."`. An exact `agent_id` match wins.
-- **`AGENT_PRIVATE_KEY`** — single-key fallback when no `AGENT_KEYS` entry matches (also the wallet used for agent-less buys).
+- **`AGENT_PRIVATE_KEY`** — single-key fallback when no `AGENT_KEYS` entry matches (also the wallet used for agent-less buys). It signs for any agent id `AGENT_KEYS` does not list, so leave it unset once `AGENT_KEYS` covers your agents, unless you make agent-less buys.
 
 Keys are parsed and validated once at boot — a bad key fails the signer at startup, not mid-flow. At least one of the two must be set.
 
