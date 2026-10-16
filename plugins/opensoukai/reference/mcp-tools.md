@@ -69,6 +69,7 @@ does not make it a signer tool; it is registered on `referrer-agent`.
 | `add_product` | Add a product: on-chain record + backend metadata |
 | `set_product_commission` | Change a product's commission rate on-chain |
 | `set_product_active` | List or delist a product on-chain |
+| `update_product` | Change a product's name, description, category or endpoint URLs on the backend (no transaction) |
 | `check_product_readiness` | Probe a product's x402 endpoint for referral-payment wiring |
 | `get_merchant_stats` | A merchant's own conversions, revenue, escrow and product counts |
 | `grant_merchant_role` | Delegate one merchant capability to another address on-chain |
@@ -82,7 +83,7 @@ this skill: an **owner's agent-runner** executing intents a human confirmed, rat
 acting on a ref link it just encountered. They are listed here because they exist and an agent may
 be handed them; their flows are not taught in this skill.
 
-The merchant tools (`activate_merchant`, `set_merchant_profile`, `add_product`,
+The merchant tools (`activate_merchant`, `set_merchant_profile`, `add_product`, `update_product`,
 `set_product_commission`, `set_product_active`, `check_product_readiness`,
 `get_merchant_stats`, `grant_merchant_role`, `revoke_merchant_role`, and the
 `get_merchant` / `get_product` / `get_products` /
