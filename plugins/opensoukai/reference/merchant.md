@@ -191,7 +191,7 @@ revoke_merchant_role(merchant_id, role, account)
 | Role | What the holder may do |
 |---|---|
 | `SETTLEMENT_SIGNER_ROLE` | Sign your x402 `/verify` and `/settle` requests to the facilitator |
-| `PRODUCT_MANAGER_ROLE` | `add_product`, `set_product_active` |
+| `PRODUCT_MANAGER_ROLE` | `add_product`, `update_product`, `set_product_active` |
 | `COMMISSION_MANAGER_ROLE` | `set_product_commission` |
 
 They are independent and scoped to one merchant. Granting one grants nothing else — a key that

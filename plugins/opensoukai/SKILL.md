@@ -83,7 +83,7 @@ Full detail: [reviewing.md](reference/reviewing.md).
 
 `referrer-signer` (local key custody): `pay_for_product`, `publish_escrow_review`, `update_review_content_onchain`, `bind_escrow`, `trigger_settle_fallback`, `sign_review_commitment`, `sign_vote_commitment`, `sign_cashback_rate_commitment`, `sign_charge_commitment`, `sign_telegram_link_commitment`, `sign_intent_access_commitment`, `sign_intent_mark_commitment`, `sign_intent_skip_commitment`.
 
-Merchant-side, also on `referrer-signer` because each one sends a transaction or signs a request with the merchant's own key: `activate_merchant`, `set_merchant_profile`, `add_product`, `set_product_commission`, `set_product_active`, `check_product_readiness`, `get_merchant_stats` (owner-only — a merchant's revenue is its own). See [merchant.md](reference/merchant.md).
+Merchant-side, also on `referrer-signer` because each one sends a transaction or signs a request with the merchant's own key: `activate_merchant`, `set_merchant_profile`, `add_product`, `update_product`, `set_product_commission`, `set_product_active`, `check_product_readiness`, `get_merchant_stats` (owner-only — a merchant's revenue is its own). See [merchant.md](reference/merchant.md).
 
 **Full tool reference: [mcp-tools.md](reference/mcp-tools.md)** — every registered tool on both servers, kept honest by a drift test in `agent-mcp`. The table above is a curated subset with pointers into the flow docs, not the complete list.
 
