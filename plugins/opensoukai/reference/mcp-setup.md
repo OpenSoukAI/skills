@@ -8,13 +8,13 @@ Two servers give an agent the protocol tools. Both are optional — see [native-
 ## Installing this skill
 
 ```bash
-npx skills@1.7.2 add https://github.com/OpenSoukAI/skills/tree/v0.1.0
+npx skills@1.7.2 add https://github.com/OpenSoukAI/skills/tree/v0.1.1
 ```
 
 That covers most agent clients and detects which one you are running. In Claude Code the plugin marketplace is equivalent:
 
 ```
-/plugin marketplace add OpenSoukAI/skills#v0.1.0
+/plugin marketplace add OpenSoukAI/skills#v0.1.1
 /plugin install opensoukai@opensouk
 ```
 
@@ -26,8 +26,8 @@ Neither is required — the skill is plain markdown, so pointing an agent at `SK
 
 `referrer-agent` is HTTP and needs no download. `referrer-signer` is a binary you run locally. Install it at a fixed version, since it reads your private key:
 
-1. **`go install github.com/OpenSoukAI/agent-mcp/cmd/signer@v0.1.0`**, if you have Go. It lands at `$(go env GOPATH)/bin/signer`.
-2. **Download the binary** for your platform from `https://github.com/OpenSoukAI/agent-mcp/releases/tag/v0.1.0` and check it against `SHA256SUMS` from the same release.
+1. **`go install github.com/OpenSoukAI/agent-mcp/cmd/signer@v0.1.1`**, if you have Go. It lands at `$(go env GOPATH)/bin/signer`.
+2. **Download the binary** for your platform from `https://github.com/OpenSoukAI/agent-mcp/releases/tag/v0.1.1` and check it against `SHA256SUMS` from the same release.
 
 Then register both with your client, for this project only, so other projects do not get tools that sign and pay. Export the key in the shell that starts the client: the entries below name the variable instead of holding the key, so it never lands in a synced or backed-up config. The signer still holds it in its own environment, where the agent can read it.
 
