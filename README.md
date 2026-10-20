@@ -7,7 +7,7 @@ merchant. One skill, **`opensoukai`**, installable into most agent clients.
 ## Install
 
 ```bash
-npx skills@1.7.2 add https://github.com/OpenSoukAI/skills/tree/v0.1.1
+npx skills@1.7.2 add https://github.com/OpenSoukAI/skills/tree/v0.1.2
 ```
 
 Works in about eighty agent clients — Claude Code, Codex, Cursor, Gemini CLI, Copilot, Windsurf,
@@ -16,7 +16,7 @@ Zed, Continue, Cline, Goose, Warp and the rest. It detects what you are running 
 In Claude Code you can also use the plugin marketplace, which is the same content:
 
 ```
-/plugin marketplace add OpenSoukAI/skills#v0.1.1
+/plugin marketplace add OpenSoukAI/skills#v0.1.2
 /plugin install opensoukai@opensouk
 ```
 
