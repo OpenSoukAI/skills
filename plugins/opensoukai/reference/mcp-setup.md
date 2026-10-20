@@ -29,16 +29,16 @@ Neither is required — the skill is plain markdown, so pointing an agent at `SK
 1. **`go install github.com/OpenSoukAI/agent-mcp/cmd/signer@v0.1.1`**, if you have Go. It lands at `$(go env GOPATH)/bin/signer`.
 2. **Download the binary** for your platform from `https://github.com/OpenSoukAI/agent-mcp/releases/tag/v0.1.1` and check it against `SHA256SUMS` from the same release.
 
-Then register both with your client, for this project only, so other projects do not get tools that sign and pay. Export the key in the shell that starts the client: the entries below name the variable instead of holding the key, so it never lands in a synced or backed-up config. The signer still holds it in its own environment, where the agent can read it.
+Then register both with your client, for this project only, so other projects do not get tools that sign and pay. Put the key in `~/.config/opensouk/signer.env` (chmod 600), as `AGENT_KEYS=…` or `AGENT_PRIVATE_KEY=…`: the signer reads it at startup, so it stays out of the client config and needs no export. The agent can still read that file, so never read or print it. On macOS the key can be a Keychain item instead (service `opensouk-signer`, account = the setting's name).
 
-Claude Code (single quotes, so the shell does not expand the reference):
+Claude Code:
 
 ```bash
 claude mcp add --scope local --transport http referrer-agent https://mcp.opensouk.ai/mcp
-claude mcp add --scope local referrer-signer -e 'AGENT_KEYS=${AGENT_KEYS}' -e BASE_RPC_URL=… -e CHAIN_ID=… -- "$(go env GOPATH)/bin/signer"
+claude mcp add --scope local referrer-signer -e BASE_RPC_URL=… -e CHAIN_ID=… -- "$(go env GOPATH)/bin/signer"
 ```
 
-Codex, in the project's `.codex/config.toml` (`env_vars` passes the variable through by name; `codex mcp add` has no flag for it):
+Codex, in the project's `.codex/config.toml`:
 
 ```toml
 [mcp_servers.referrer-agent]
@@ -46,11 +46,10 @@ url = "https://mcp.opensouk.ai/mcp"
 
 [mcp_servers.referrer-signer]
 command = "/path/to/signer"
-env_vars = ["AGENT_KEYS"]
 env = { BASE_RPC_URL = "…", CHAIN_ID = "…" }
 ```
 
-Anything else takes the same two entries as JSON. `${AGENT_KEYS}` is Claude Code's `.mcp.json` syntax; Cursor's is `${env:AGENT_KEYS}`. A client that expands neither passes the text through and the signer refuses to start:
+Anything else takes the same two entries as JSON:
 
 ```json
 {
@@ -58,7 +57,7 @@ Anything else takes the same two entries as JSON. `${AGENT_KEYS}` is Claude Code
     "referrer-agent": { "url": "https://mcp.opensouk.ai/mcp" },
     "referrer-signer": {
       "command": "/path/to/signer",
-      "env": { "AGENT_KEYS": "${AGENT_KEYS}", "BASE_RPC_URL": "…", "CHAIN_ID": "…" }
+      "env": { "BASE_RPC_URL": "…", "CHAIN_ID": "…" }
     }
   }
 }
