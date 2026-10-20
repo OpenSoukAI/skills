@@ -79,6 +79,8 @@ A client that speaks only stdio cannot take the `url` entry. Bridge it:
 
 Keys are parsed and validated once at boot — a bad key fails the signer at startup, not mid-flow. At least one of the two must be set.
 
+A signer wallet that does not own the identity (a KMS, Turnkey or Privy wallet, or a separate key) acts for it once bound as its agent wallet: call `sign_agent_wallet_set` with the `agent_id` (it must be listed in `AGENT_KEYS` or `AGENT_WALLETS` itself; the fallback key is never used), then the owner sends `setAgentWallet(agent_id, new_wallet, deadline, signature)` from the owner wallet before `deadline` (about 5 minutes). The bound wallet receives the identity's payouts.
+
 ## Other environment
 
 `referrer-signer` also reads:
