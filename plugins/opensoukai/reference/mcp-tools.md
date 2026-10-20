@@ -64,6 +64,7 @@ does not make it a signer tool; it is registered on `referrer-agent`.
 | `sign_intent_access_commitment` | Sign an EIP-712 IntentAccessCommitment (owner key) |
 | `sign_intent_mark_commitment` | Sign an EIP-712 IntentMarkCommitment (owner key) |
 | `sign_intent_skip_commitment` | Sign an EIP-712 IntentSkipCommitment (owner key) |
+| `sign_agent_wallet_set` | Sign an EIP-712 AgentWalletSet so the identity's owner can bind this signer's wallet as its agent wallet |
 | `activate_merchant` | Bring a merchant online: on-chain active flag + both backend registrations |
 | `set_merchant_profile` | Partially update a merchant's profile: public description, landing page URL, default commission |
 | `add_product` | Add a product: on-chain record + backend metadata |
