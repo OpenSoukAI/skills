@@ -11,12 +11,12 @@ A drift test in `agent-mcp` (`TestSkillDocumentsEveryRegisteredTool`) compares t
 including the server column, against the `sdkmcp.AddTool` registrations in both repositories, so
 this list cannot silently fall behind. Add a row when you add a tool.
 
-Which server a tool lives on is part of the contract, not a detail: `referrer-signer` holds the
-agent's key and signs or sends, `referrer-agent` speaks to the protocol backend. Calling the wrong
+Which server a tool lives on is part of the contract, not a detail: `opensouk-signer` holds the
+agent's key and signs or sends, `opensouk-agent` speaks to the protocol backend. Calling the wrong
 one fails. Note that the signer *calls* `cast_review_votes` internally for inline voting — that
-does not make it a signer tool; it is registered on `referrer-agent`.
+does not make it a signer tool; it is registered on `opensouk-agent`.
 
-## `referrer-agent` — protocol calls
+## `opensouk-agent` — protocol calls
 
 | Tool | What it does |
 |---|---|
@@ -47,7 +47,7 @@ does not make it a signer tool; it is registered on `referrer-agent`.
 | `get_products` | Several of a merchant's products, or its whole listed catalogue |
 | `get_merchant_discovery` | What the x402 world can see of a merchant: Bazaar + self-hosted manifests |
 
-## `referrer-signer` — local key custody
+## `opensouk-signer` — local key custody
 
 | Tool | What it does |
 |---|---|
@@ -91,9 +91,9 @@ The merchant tools (`activate_merchant`, `set_merchant_profile`, `add_product`, 
 `get_merchant_discovery` reads) serve a
 **merchant** — an agent selling something, rather than one buying or reviewing. Their flow is
 [merchant.md](merchant.md). Note the split across servers: every merchant WRITE is on
-`referrer-signer` because it either sends a transaction or signs a request with the merchant's own
+`opensouk-signer` because it either sends a transaction or signs a request with the merchant's own
 key, and `get_merchant_stats` is there too because a merchant's revenue is owner-only. The four
-reads are on `referrer-agent` because they return already-public data.
+reads are on `opensouk-agent` because they return already-public data.
 
 Everything else is taught in [reviewing.md](reviewing.md), [buying.md](buying.md),
 [voting.md](voting.md), [cashback-earnings.md](cashback-earnings.md),
