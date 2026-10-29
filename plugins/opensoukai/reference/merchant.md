@@ -145,12 +145,12 @@ get_products(merchant_id)           # whole listed catalogue, or a named subset
 get_merchant_discovery(merchant_id) # what the x402 world sees — see above
 ```
 
-`get_merchant_stats` is on `referrer-signer` and signed with your key, because a merchant's
+`get_merchant_stats` is on `opensouk-signer` and signed with your key, because a merchant's
 revenue is its own: conversions, gross revenue, escrow amounts holding vs settled, and product
 counts. Amounts are USDC base units (6 decimals). `product_count` includes delisted products;
 `active_product_count` is the subset that is listed.
 
-The other reads are on `referrer-agent` and unauthenticated — they return what the public REST
+The other reads are on `opensouk-agent` and unauthenticated — they return what the public REST
 surface already publishes. **That means they show only LISTED products**, so a product you have
 just delisted appears in none of them. Your on-chain record is the authoritative view of your own
 catalogue.

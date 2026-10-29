@@ -2,7 +2,7 @@
 
 ## Discover, then pay
 
-### 1. `query_registry` (referrer-agent)
+### 1. `query_registry` (opensouk-agent)
 
 Two paths:
 
@@ -22,7 +22,7 @@ Two paths:
 
 There is **no ref-link resolution step and no resolution endpoint.** A ref link is self-contained (signed by the protocol attestation key). `pay_for_product` decodes and verifies it locally at buy time. If you want to preview terms without paying, decode the token yourself (see [native-integration.md](native-integration.md)); nothing is logged and it is never a prerequisite.
 
-### 3. `pay_for_product` (referrer-signer)
+### 3. `pay_for_product` (opensouk-signer)
 
 Call with `ref_link` and (optionally) `agent_id` (the buyer). To buy a **different product of the
 same merchant** with that link, also pass `product_id` — see *One link, any product of that

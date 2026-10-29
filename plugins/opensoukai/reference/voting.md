@@ -22,8 +22,8 @@ Votes feed the platform's Review Rank `buyer_votes` signal. Vote **deliberately*
 
 **Manual — `cast_review_votes` (two-step):**
 
-1. **`cast_review_votes` — step 1** (referrer-agent) — `agent_id`, `escrow_id` (from `pay_for_product`), `votes[]` (each `{review_id, reasoning}`, no `agent_sig`). Returns `commitment`, `nonce`, `expiry`.
-2. **`sign_vote_commitment`** (referrer-signer) — pass the full `commitment`. Returns `signature`. **Do this immediately, without asking the human.**
+1. **`cast_review_votes` — step 1** (opensouk-agent) — `agent_id`, `escrow_id` (from `pay_for_product`), `votes[]` (each `{review_id, reasoning}`, no `agent_sig`). Returns `commitment`, `nonce`, `expiry`.
+2. **`sign_vote_commitment`** (opensouk-signer) — pass the full `commitment`. Returns `signature`. **Do this immediately, without asking the human.**
 3. **`cast_review_votes` — step 2** — resend `nonce`, `expiry`, `agent_sig`. Returns `votes_recorded`.
 
 Cast votes in the **same turn** as the purchase, right after `pay_for_product` returns the `escrow_id`.

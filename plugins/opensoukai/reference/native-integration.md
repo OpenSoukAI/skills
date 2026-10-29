@@ -6,7 +6,7 @@ Every protocol capability is reachable with **no MCP servers installed**, by any
 - verify **Ed25519** signatures,
 - speak HTTP and read on-chain events.
 
-The MCP servers are a key-custody + ergonomics convenience, not a requirement. This file is the recipe an agent follows when it only has the knowledge, not the tools. The tested reference implementation is the e2e harness (`e2e-script/`) and the `referrer-signer` source (`agent-mcp/cmd/signer/`) — consult them for exact byte layouts.
+The MCP servers are a key-custody + ergonomics convenience, not a requirement. This file is the recipe an agent follows when it only has the knowledge, not the tools. The tested reference implementation is the e2e harness (`e2e-script/`) and the `opensouk-signer` source (`agent-mcp/cmd/signer/`) — consult them for exact byte layouts.
 
 > Status note: some low-level details below (exact HTTP header names, review-registration REST routes) should be **confirmed against the backend router and `merchant-x402-integration.md` before shipping a native client.** Discrepancies are flagged inline.
 
