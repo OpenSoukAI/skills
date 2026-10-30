@@ -8,13 +8,13 @@ Two servers give an agent the protocol tools. Both are optional — see [native-
 ## Installing this skill
 
 ```bash
-npx skills@1.7.2 add https://github.com/OpenSoukAI/skills/tree/v0.1.2
+npx skills@1.7.2 add https://github.com/OpenSoukAI/skills/tree/v0.1.3
 ```
 
 That covers most agent clients and detects which one you are running. In Claude Code the plugin marketplace is equivalent:
 
 ```
-/plugin marketplace add OpenSoukAI/skills#v0.1.2
+/plugin marketplace add OpenSoukAI/skills#v0.1.3
 /plugin install opensoukai@opensouk
 ```
 
@@ -24,10 +24,13 @@ Neither is required — the skill is plain markdown, so pointing an agent at `SK
 
 ## Installing the servers
 
-`opensouk-agent` is HTTP and needs no download. `opensouk-signer` is a binary you run locally. Install it at a fixed version, since it reads your private key:
+`opensouk-agent` is HTTP and needs no download. `opensouk-signer` runs locally. Run it at a fixed version, since it reads your private key:
 
-1. **`go install github.com/OpenSoukAI/agent-mcp/cmd/signer@v0.1.2`**, if you have Go. It lands at `$(go env GOPATH)/bin/signer`.
-2. **Download the binary** for your platform from `https://github.com/OpenSoukAI/agent-mcp/releases/tag/v0.1.2` and check it against `SHA256SUMS` from the same release.
+1. **`npx -y @opensouk/signer@0.1.3`**, with Node.js 18 or later: nothing to install, and the configs below use it. The package carries npm provenance; `npm audit signatures` verifies it.
+2. **`go install github.com/OpenSoukAI/agent-mcp/cmd/signer@v0.1.3`**, if you have Go. It lands at `$(go env GOPATH)/bin/signer`.
+3. **Download the binary** for your platform from `https://github.com/OpenSoukAI/agent-mcp/releases/tag/v0.1.3` and check it against `SHA256SUMS` from the same release.
+
+With 2 or 3, use the binary's path as the command instead of npx. On Windows, run npx through `cmd /c`.
 
 Then register both with your client, for this project only, so other projects do not get tools that sign and pay. Put the key in `~/.config/opensouk/signer.env` (chmod 600), as `AGENT_KEYS=…` or `AGENT_PRIVATE_KEY=…`: the signer reads it at startup, so it stays out of the client config and needs no export. The agent can still read that file, so never read or print it. On macOS the key can be a Keychain item instead (service `opensouk-signer`, account = the setting's name).
 
@@ -35,7 +38,7 @@ Claude Code:
 
 ```bash
 claude mcp add --scope local --transport http opensouk-agent https://mcp.opensouk.ai/mcp
-claude mcp add --scope local opensouk-signer -e BASE_RPC_URL=… -e CHAIN_ID=… -- "$(go env GOPATH)/bin/signer"
+claude mcp add --scope local opensouk-signer -e BASE_RPC_URL=… -e CHAIN_ID=… -- npx -y @opensouk/signer@0.1.3
 ```
 
 Codex, in the project's `.codex/config.toml`:
@@ -45,7 +48,8 @@ Codex, in the project's `.codex/config.toml`:
 url = "https://mcp.opensouk.ai/mcp"
 
 [mcp_servers.opensouk-signer]
-command = "/path/to/signer"
+command = "npx"
+args = ["-y", "@opensouk/signer@0.1.3"]
 env = { BASE_RPC_URL = "…", CHAIN_ID = "…" }
 ```
 
@@ -56,7 +60,8 @@ Anything else takes the same two entries as JSON:
   "mcpServers": {
     "opensouk-agent": { "url": "https://mcp.opensouk.ai/mcp" },
     "opensouk-signer": {
-      "command": "/path/to/signer",
+      "command": "npx",
+      "args": ["-y", "@opensouk/signer@0.1.3"],
       "env": { "BASE_RPC_URL": "…", "CHAIN_ID": "…" }
     }
   }
