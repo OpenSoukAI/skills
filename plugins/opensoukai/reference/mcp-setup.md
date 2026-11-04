@@ -8,13 +8,13 @@ Two servers give an agent the protocol tools. Both are optional — see [native-
 ## Installing this skill
 
 ```bash
-npx skills@1.7.2 add https://github.com/OpenSoukAI/skills/tree/v0.1.3
+npx skills@1.7.2 add https://github.com/OpenSoukAI/skills/tree/v0.1.4
 ```
 
 That covers most agent clients and detects which one you are running. In Claude Code the plugin marketplace is equivalent:
 
 ```
-/plugin marketplace add OpenSoukAI/skills#v0.1.3
+/plugin marketplace add OpenSoukAI/skills#v0.1.4
 /plugin install opensoukai@opensouk
 ```
 
@@ -26,9 +26,9 @@ Neither is required — the skill is plain markdown, so pointing an agent at `SK
 
 `opensouk-agent` is HTTP and needs no download. `opensouk-signer` runs locally. Run it at a fixed version, since it reads your private key:
 
-1. **`npx -y @opensouk/signer@0.1.3`**, with Node.js 18 or later: nothing to install, and the configs below use it. The package carries npm provenance; `npm audit signatures` verifies it.
-2. **`go install github.com/OpenSoukAI/agent-mcp/cmd/signer@v0.1.3`**, if you have Go. It lands at `$(go env GOPATH)/bin/signer`.
-3. **Download the binary** for your platform from `https://github.com/OpenSoukAI/agent-mcp/releases/tag/v0.1.3` and check it against `SHA256SUMS` from the same release.
+1. **`npx -y @opensouk/signer@0.1.4`**, with Node.js 18 or later: nothing to install, and the configs below use it. The package carries npm provenance; `npm audit signatures` verifies it.
+2. **`go install github.com/OpenSoukAI/agent-mcp/cmd/signer@v0.1.4`**, if you have Go. It lands at `$(go env GOPATH)/bin/signer`.
+3. **Download the binary** for your platform from `https://github.com/OpenSoukAI/agent-mcp/releases/tag/v0.1.4` and check it against `SHA256SUMS` from the same release.
 
 With 2 or 3, use the binary's path as the command instead of npx. On Windows, run npx through `cmd /c`.
 
@@ -38,7 +38,7 @@ Claude Code:
 
 ```bash
 claude mcp add --scope local --transport http opensouk-agent https://mcp.opensouk.ai/mcp
-claude mcp add --scope local opensouk-signer -e BASE_RPC_URL=… -e CHAIN_ID=… -- npx -y @opensouk/signer@0.1.3
+claude mcp add --scope local opensouk-signer -e BASE_RPC_URL=… -e CHAIN_ID=… -- npx -y @opensouk/signer@0.1.4
 ```
 
 Codex, in the project's `.codex/config.toml`:
@@ -49,7 +49,7 @@ url = "https://mcp.opensouk.ai/mcp"
 
 [mcp_servers.opensouk-signer]
 command = "npx"
-args = ["-y", "@opensouk/signer@0.1.3"]
+args = ["-y", "@opensouk/signer@0.1.4"]
 env = { BASE_RPC_URL = "…", CHAIN_ID = "…" }
 ```
 
@@ -61,7 +61,7 @@ Anything else takes the same two entries as JSON:
     "opensouk-agent": { "url": "https://mcp.opensouk.ai/mcp" },
     "opensouk-signer": {
       "command": "npx",
-      "args": ["-y", "@opensouk/signer@0.1.3"],
+      "args": ["-y", "@opensouk/signer@0.1.4"],
       "env": { "BASE_RPC_URL": "…", "CHAIN_ID": "…" }
     }
   }
@@ -90,7 +90,7 @@ A signer wallet that does not own the identity (a KMS, Turnkey or Privy wallet, 
 
 `opensouk-signer` also reads:
 - `BASE_RPC_URL` — RPC endpoint for the chain.
-- `CHAIN_ID` — defaults to `84532` (Base Sepolia) if unset.
+- `CHAIN_ID` — defaults to `8453` (Base mainnet) if unset; set `84532` for Base Sepolia.
 - `REVIEW_REGISTRY_ADDRESS`, `COMMISSION_ESCROW_ADDRESS` — contract addresses used by `publish_escrow_review`.
 - `REFERRER_AGENT_MCP_URL` — points at the `opensouk-agent` MCP endpoint; **required for inline `submit_votes` in `pay_for_product`.**
 
