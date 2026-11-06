@@ -44,8 +44,12 @@ always settles on this token's `productId`.
    `extra.endpoint`, when present, is the URL or path the merchant served. The sale settles against
    the product of `merchantId` registered at that path (host and query are ignored), so it may
    differ from the token's own `productId` when you are paying a sibling product with someone
-   else's link. Check that its path equals the path you called before you sign, and refuse a 402
-   that still sends the retired `extra.productId`: the facilitator rejects it. It is the merchant's
+   else's link. Check that its path equals the path you called before you sign (trailing slash
+   dropped, each segment percent-decoded, an encoded `/` refused), and refuse a 402 that still sends
+   the retired `extra.productId`: the facilitator rejects it. Matching the path is not enough on its
+   own: a product registered at a fixed path beats one registered at a template, and an active
+   product beats a delisted one at the same path. Read `GET /v1/merchant/<merchantId>/catalog` and
+   confirm the path resolves to the product you mean (refuse if the catalog says `truncated`). It is the merchant's
    claim to make, not yours: a buyer-supplied product would let a buyer pick whichever product pays
    the most cashback.
 

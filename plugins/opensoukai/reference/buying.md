@@ -66,7 +66,9 @@ Some products are registered at a **template**, such as `https://shop.example/le
 `url` with the concrete URL you want (`https://shop.example/letters/8812`): it must be on the same
 host and its path must fit the template. The tool checks the merchant's catalog that this URL
 settles as the product you asked for (another product registered at that exact path would win),
-and refuses otherwise. Without `url`, a templated product is refused.
+and refuses otherwise. Without `url`, a templated product is refused. When you buy the link's own
+product, the tool also checks the catalog: if that product was delisted and another one now holds
+its path, the sale would settle as the other product, so it is refused.
 
 **This does not apply to the MPP charge rail.** An MPP charge carries no merchant 402 and no
 merchant assertion at all, so it always settles on the token's own product. To buy product B over
