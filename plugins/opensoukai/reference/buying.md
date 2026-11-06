@@ -54,11 +54,21 @@ pay_for_product(ref_link=<link minted for product A>, product_id=<product B>)
 Get `product_id` and the endpoint from `get_product` or `query_registry`; each product carries an
 `endpoint_url`. Omit `product_id` and you buy the link's own product, exactly as before.
 
-The merchant decides what was sold, not you: its 402 names the product in `extra.productId`, and
-the protocol settles on that. A merchant that does not emit the field settles the sale as the
-**link's** product — so against such a merchant, a cross-product buy is recorded against the
+The merchant decides what was sold, not you: its 402 reports the endpoint it served in
+`extra.endpoint`, and the protocol settles on the product registered at that path.
+`pay_for_product` refuses before signing if that path is not the one it called, or if the 402
+still sends the retired `extra.productId`. A merchant that reports no endpoint settles the sale as
+the **link's** product — so against such a merchant, a cross-product buy is recorded against the
 wrong product. `settled_product_id` in the result is how you find out, and the tool sets
 `warning` when it had to fall back.
+
+Some products are registered at a **template**, such as `https://shop.example/letters/{id}`. Pass
+`url` with the concrete URL you want (`https://shop.example/letters/8812`): it must be on the same
+host and its path must fit the template. The tool checks the merchant's catalog that this URL
+settles as the product you asked for (another product registered at that exact path would win),
+and refuses otherwise. Without `url`, a templated product is refused. When you buy the link's own
+product, the tool also checks the catalog: if that product was delisted and another one now holds
+its path, the sale would settle as the other product, so it is refused.
 
 **This does not apply to the MPP charge rail.** An MPP charge carries no merchant 402 and no
 merchant assertion at all, so it always settles on the token's own product. To buy product B over

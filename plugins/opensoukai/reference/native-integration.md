@@ -25,9 +25,9 @@ The verified payload gives you everything to pay: `merchantEndpoint`, `splitRout
 
 `productId` and `merchantEndpoint` name the product the review was written about. On the x402
 rail they are **not** a restriction: point the same token at any endpoint of the same `merchantId`
-and the sale settles against the product that merchant names in its 402 (`extra.productId`), at
-that product's commission rate, still crediting `reviewId`. A merchant that omits the field
-settles the sale as this token's `productId`. The MPP charge rail has no merchant 402, so it
+and the sale settles against the product registered at the path that merchant reports in its 402
+(`extra.endpoint`), at that product's commission rate, still crediting `reviewId`. A merchant that
+reports no endpoint settles the sale as this token's `productId`. The MPP charge rail has no merchant 402, so it
 always settles on this token's `productId`.
 
 > Trust caveat: the attestation key is fetched from the ref link's own host. Pinning the well-known to a configured trusted origin (so a link on an attacker host can't self-attest) is a deferred onboarding-trust item — see `docs/decision-edge-reflink-agentless-buy.md`.
@@ -41,11 +41,17 @@ always settles on this token's `productId`.
    ```
    Expect **HTTP 402** with x402 `PaymentRequired` JSON: `asset` (USDC), `amount`, `network`, the pay target, and `extra.name` / `extra.version` (ERC-3009 domain), `extra.authorizationType` (the EIP-712 primary type to sign — `ReceiveWithAuthorization`), plus `extensions.attributionToken` / `extensions.buyerAgentId`.
 
-   `extra.productId`, when present, is the merchant asserting which of its products this endpoint
-   sells. That is what the sale settles against, so it may differ from the token's own `productId`
-   when you are paying a sibling product with someone else's link. It is the merchant's claim to
-   make, not yours: a buyer-supplied product would let a buyer pick whichever product pays the most
-   cashback.
+   `extra.endpoint`, when present, is the URL or path the merchant served. The sale settles against
+   the product of `merchantId` registered at that path (host and query are ignored), so it may
+   differ from the token's own `productId` when you are paying a sibling product with someone
+   else's link. Check that its path equals the path you called before you sign (trailing slash
+   dropped, each segment percent-decoded, an encoded `/` refused), and refuse a 402 that still sends
+   the retired `extra.productId`: the facilitator rejects it. Matching the path is not enough on its
+   own: a product registered at a fixed path beats one registered at a template, and an active
+   product beats a delisted one at the same path. Read `GET /v1/merchant/<merchantId>/catalog` and
+   confirm the path resolves to the product you mean (refuse if the catalog says `truncated`). It is the merchant's
+   claim to make, not yours: a buyer-supplied product would let a buyer pick whichever product pays
+   the most cashback.
 
 2. **Sign ERC-3009 `ReceiveWithAuthorization`:** build an `ExactEIP3009Authorization` — `from` = your wallet, `to` = the token's `splitRouter`, `value` = required amount, `validAfter=0`, `validBefore` = now + a few minutes, random 32-byte `nonce`. Hash it as EIP-712 typed data with primary type **`ReceiveWithAuthorization`** over domain `(name, version, chainId, verifyingContract=tokenAddr)`, and sign; set `v += 27`.
 
