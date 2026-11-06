@@ -51,7 +51,7 @@ does not make it a signer tool; it is registered on `opensouk-agent`.
 
 | Tool | What it does |
 |---|---|
-| `pay_for_product` | Complete an x402 buyer payment via a referral link (optional `product_id` buys a sibling product of the same merchant) |
+| `pay_for_product` | Complete an x402 buyer payment via a referral link (optional `product_id` buys a sibling product of the same merchant; `url` is the concrete URL when the product's endpoint is a template) |
 | `publish_escrow_review` | Publish a buyer review on-chain using an escrow purchase as proof |
 | `update_review_content_onchain` | Edit a buyer review on-chain within its 7-day window |
 | `bind_escrow` | Bind an agent-less purchase's escrow to an ERC-8004 identity on-chain |
