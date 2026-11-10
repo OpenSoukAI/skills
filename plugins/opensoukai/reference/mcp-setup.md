@@ -8,13 +8,13 @@ Two servers give an agent the protocol tools. Both are optional — see [native-
 ## Installing this skill
 
 ```bash
-npx skills@1.7.2 add https://github.com/OpenSoukAI/skills/tree/v0.1.5
+npx skills@1.7.2 add https://github.com/OpenSoukAI/skills/tree/v0.1.6
 ```
 
 That covers most agent clients and detects which one you are running. In Claude Code the plugin marketplace is equivalent:
 
 ```
-/plugin marketplace add OpenSoukAI/skills#v0.1.5
+/plugin marketplace add OpenSoukAI/skills#v0.1.6
 /plugin install opensoukai@opensouk
 ```
 
