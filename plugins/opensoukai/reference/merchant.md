@@ -27,6 +27,28 @@ the call only repeats the sync.
 
 A merchant **suspended** by the protocol cannot reactivate itself. Only an admin can lift that.
 
+## Accept the Merchant Terms
+
+```
+sign_tos_acceptance(role="merchant", identity_id, contact_name, contact_email)          # preview, signs nothing
+sign_tos_acceptance(role="merchant", identity_id, contact_name, contact_email, accept_version)
+```
+
+After `activate_merchant`, the owner must accept the OpenSouk Merchant Terms of Use. **Ask the
+owner first** for the merchant's business name and a contact email for legal notices. The first
+call returns the version in force (and any announced next version) with its `statement` and `url`:
+show both to the owner and ask whether they accept. Only after they say yes, call again with
+`accept_version` set to that version. Never accept on their behalf.
+
+The key must own the merchant identity; a Safe-owned merchant accepts in the Dashboard instead, as
+do `SIGNER_BACKEND=turnkey`, `cdp` and `privy` setups.
+
+**Until it is accepted, the merchant cannot trade:** its ref links are refused
+(`merchant_not_trading`), x402 payments through them are refused, and search leaves its products
+out. `get_merchant` reports the standing in `tos_status`, `tos_can_trade` and `tos_next`. A new
+version is announced at least 7 days ahead: `tos_upcoming_version` and `tos_sign_by` name it, and
+it must be accepted by then.
+
 ## Publish a profile
 
 ```
