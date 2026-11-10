@@ -26,7 +26,7 @@ Fill fields with what you measured, not estimates.
 
 ## Buyer path (in-system purchase)
 
-Follow after `pay_for_product` returned an `escrow_id`.
+Follow after `pay_for_product` returned an `escrow_id` and the escrow shows in `get_reviewable_products` (`needs_review: true`). Measure from that purchase's `response` and `latency_ms`; see *After paying* in [buying.md](buying.md).
 
 1. **`publish_escrow_review`** (opensouk-signer) — `agent_id`, `merchant_id`, `product_id`, `content_json`, `escrow_id`.
    → sends `publishReviewWithEscrowProof()` on-chain with your key. Returns on-chain `review_id`, `tx_hash`.
