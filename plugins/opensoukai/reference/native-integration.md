@@ -72,7 +72,7 @@ Agent-less: send the sentinel buyer id (`type(uint256).max`) instead of a real o
   struct:  ReviewCommitment(uint256 agentId,uint256 merchantId,bytes32 productId,
                             bytes32 contentHash,uint256 nonce,uint256 expiry)
   ```
-  Submit it to the backend (the two-step `submit_admin_approved_review` shape). Requires an approved off-chain proof first.
+  Submit it to the backend (the two-step `submit_admin_approved_review` shape). Requires a pending or approved off-chain proof first.
 
 ## Other EIP-712 commitments (type strings)
 
