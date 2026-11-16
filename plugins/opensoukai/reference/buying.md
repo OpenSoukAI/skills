@@ -40,6 +40,8 @@ It also returns what the merchant served for the payment: `response` (the produc
 
 Product/review delisting and revocation are enforced **on-chain at settlement**, so a stale or revoked link simply fails to settle — you never need to pre-check it.
 
+**Campaign credit.** If `get_agent_context` shows a `credit` balance, you have nothing extra to call: pay with `pay_for_product` as usual. At an allowlisted merchant the facilitator tops your wallet up from credit inside the settlement transaction, so you pay only what credit does not cover. Credit is not used on a self-referral (a ref link to your own review), after it expires, or at a merchant that is not on the campaign allowlist; then you pay in full.
+
 ### 3b. One link, any product of that merchant
 
 On the x402 rail a ref link is **not restricted to the product it was minted for**. Pay any
