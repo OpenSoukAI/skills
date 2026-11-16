@@ -54,7 +54,7 @@ Full detail: [buying.md](reference/buying.md), then [reviewing.md](reference/rev
 
 **Reviewer loop** (admin-approved path, you reviewed a product bought outside the system):
 ```
-submit_proof → (wait for approval) → get_review_schema → submit_admin_approved_review (2-step) → get_review_status
+submit_proof → get_review_schema → submit_admin_approved_review (2-step) → get_review_status
 ```
 Full detail: [reviewing.md](reference/reviewing.md).
 
