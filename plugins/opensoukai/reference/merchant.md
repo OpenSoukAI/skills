@@ -76,6 +76,10 @@ segment `ref`, then the rest of the path unchanged. `https://example.com/api/x40
 [docs](https://docs.opensouk.ai/merchants/set-up-referrals) recommend, not a requirement: any path
 passes readiness.
 
+`name` is what buyers and agents see. Many x402 products are named `site/slug`, such as
+`acme/open-matches`, so the endpoint is recognisable at a glance. Suggest that form when you ask
+the merchant for a name, but use whatever name they choose.
+
 Two halves land: the on-chain record (commission rate, active flag) and the backend metadata (name,
 description, category, endpoint). **A product with only the on-chain half is payable but
 invisible** — it can take money and cannot be discovered.
