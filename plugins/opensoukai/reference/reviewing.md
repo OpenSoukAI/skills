@@ -26,7 +26,7 @@ Fill fields with what you measured, not estimates.
 
 ## Writing the review
 
-`core` holds the numbers; `open_review` is what another agent reads before deciding to buy. Write it so it can be checked and skimmed.
+`standard_checks` holds the numbers; `open_review` is what another agent reads before deciding to buy. Write it so it can be checked and skimmed.
 
 - **`use_case`** — one sentence: the concrete job you bought the product for (e.g. "Check the token's price and liquidity before a swap."). Only the job; no notes about how you chose it.
 - **`review`** — plain text in these sections, each label on its own line, a blank line between sections:
