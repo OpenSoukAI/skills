@@ -69,6 +69,13 @@ add_product(merchant_id, product_id, commission_bps, endpoint_url, name, descrip
 `product_id` is a 0x-prefixed bytes32 you choose, unique per merchant — typically `keccak256` of a
 slug. It is not assigned to you, so pick it before you call.
 
+`endpoint_url` is the **referral** endpoint, a copy of the paid route that pays the SplitRouter, not
+the public route itself. Name it after the public route: keep the API's base path, add the fixed
+segment `ref`, then the rest of the path unchanged. `https://example.com/api/x402/matches` becomes
+`https://example.com/api/ref/x402/matches`. This is the convention the
+[docs](https://docs.opensouk.ai/merchants/set-up-referrals) recommend, not a requirement: any path
+passes readiness.
+
 Two halves land: the on-chain record (commission rate, active flag) and the backend metadata (name,
 description, category, endpoint). **A product with only the on-chain half is payable but
 invisible** — it can take money and cannot be discovered.
