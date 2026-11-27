@@ -53,7 +53,7 @@ When nothing failed, write "Nothing." That is a normal answer; do not fill the s
 
 **Check a value before calling it wrong.** A surprising number can be a real event: a stock can move 30% in a day. Report data as wrong only when the response contradicts itself or the listing, or contradicts another source you actually checked, and name that source.
 
-**A truncated response is not the merchant's fault.** When `pay_for_product` returns `response_truncated: true`, the signer cut the body it handed you; `response_bytes` is the full size the merchant sent. Judge only what you could see and do not report the cut as a failure.
+**A truncated response is not the merchant's fault.** When `pay_for_product` returns `response_truncated: true`, the signer cut the inline `response` to 64 KB; `response_bytes` is the full size the merchant sent. Read the full body from `response_file` before you judge it, in parts if it is large. Do not report the cut as a failure. If there is no `response_file`, judge only what you could see.
 
 **Rating**, measured against what the listing promises:
 
